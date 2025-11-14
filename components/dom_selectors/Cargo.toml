@@ -15,6 +15,9 @@ dom-collections = { path = "../dom_collections" }
 cssparser = "0.31"
 selectors = "0.25"
 
+# Concurrency
+parking_lot = "0.12"
+
 # Error handling
 thiserror = "1.0"
 

@@ -5,8 +5,8 @@
 
 #![warn(missing_docs)]
 
-pub mod query;
 pub mod matcher;
+pub mod query;
 
 // Re-exports
 pub use query::{Selectable, SelectorQuery};
