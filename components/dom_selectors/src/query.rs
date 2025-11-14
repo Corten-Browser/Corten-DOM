@@ -55,16 +55,9 @@ impl SelectorQuery {
         let node_guard = node.read();
         let node_type = node_guard.node_type();
 
-        // Check if current node is element and matches (using limited tag-only matching)
+        // Check if current node is element and matches (using full element matching)
         if node_type == NodeType::Element && Self::matches_node(node, matcher) {
-            // Note: Due to architectural limitations (Box<dyn Node> can't be downcast
-            // without unsafe code or additional trait support), we return None here.
-            // Full query_selector support requires either:
-            // 1. Adding downcast support to dom-core's Node trait
-            // 2. Storing ElementRefs alongside NodeRefs in the tree
-            // 3. Using unsafe code for downcasting
-            //
-            // For now, matches() works when called directly on Elements.
+            // Downcast to Element using as_any() for full selector support
             drop(node_guard);
             return Ok(Self::try_as_element(node));
         }
@@ -88,9 +81,9 @@ impl SelectorQuery {
         let node_guard = node.read();
         let node_type = node_guard.node_type();
 
-        // Check if current node is element and matches (using limited tag-only matching)
+        // Check if current node is element and matches (using full element matching)
         if node_type == NodeType::Element && Self::matches_node(node, matcher) {
-            // Same limitation as find_first_recursive - can't extract ElementRef
+            // Downcast to Element using as_any() for full selector support
             if let Some(element_ref) = Self::try_as_element(node) {
                 results.push(element_ref);
             }
@@ -102,35 +95,43 @@ impl SelectorQuery {
         }
     }
 
-    /// Try to convert NodeRef to ElementRef by creating a new Element from the node
-    /// This is a workaround since we can't easily downcast trait objects
-    fn try_as_element(_node: &NodeRef) -> Option<ElementRef> {
-        // Since we can't downcast Box<dyn Node> to Element without unsafe code,
-        // and we're constrained to not modify dom-core to add downcasting support,
-        // we return None here. This limits query_selector functionality.
-        //
-        // For matches() to work, use it directly on Element instances.
-        // Full query_selector support would require:
-        // 1. Adding downcasting support to Node trait in dom-core
-        // 2. Or storing ElementRefs directly in the tree alongside NodeRefs
-        // 3. Or using a different architecture
+    /// Try to convert NodeRef to ElementRef by downcasting using as_any()
+    fn try_as_element(node: &NodeRef) -> Option<ElementRef> {
+        let node_guard = node.read();
+
+        // Use as_any() to downcast to Element
+        if let Some(element) = node_guard.as_any().downcast_ref::<Element>() {
+            // Clone the element to create an ElementRef
+            let element_clone = element.clone();
+            drop(node_guard);
+            return Some(Arc::new(RwLock::new(element_clone)));
+        }
+
         None
     }
 
-    /// Match a node directly using its Node trait methods (limited functionality)
+    /// Match a node using full element matching (classes, IDs, attributes)
     fn matches_node(node: &NodeRef, matcher: &SelectorMatcher) -> bool {
         let node_guard = node.read();
         if node_guard.node_type() != NodeType::Element {
             return false;
         }
 
-        // We can only match by tag name using node_name()
-        // Full matching (classes, IDs, attributes) requires Element-specific methods
-        // which aren't available through the Node trait
-        let tag = node_guard.node_name();
+        // Use as_any() to downcast to Element for full matching
+        if let Some(element) = node_guard.as_any().downcast_ref::<Element>() {
+            let element_clone = element.clone();
+            drop(node_guard);
 
-        // Simple tag matching only
-        matcher.matches_tag_only(tag)
+            // Create an ElementRef for matching
+            let element_ref = Arc::new(RwLock::new(element_clone));
+
+            // Use full matcher (supports classes, IDs, attributes)
+            matcher.matches(&element_ref).unwrap_or(false)
+        } else {
+            // Fallback to simple tag matching if downcast fails
+            let tag = node_guard.node_name();
+            matcher.matches_tag_only(tag)
+        }
     }
 }
 
