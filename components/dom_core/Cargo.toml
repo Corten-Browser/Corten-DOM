@@ -42,3 +42,19 @@ insta = "1.34"
 [features]
 default = ["validation"]
 validation = []
+
+[[bench]]
+name = "node_operations"
+harness = false
+
+[[bench]]
+name = "tree_manipulation"
+harness = false
+
+[[bench]]
+name = "attribute_operations"
+harness = false
+
+[[bench]]
+name = "query_selectors"
+harness = false
