@@ -3,10 +3,12 @@
 use dom_core::{Document, Element, Node};
 use dom_selectors::Selectable;
 
-// TODO v0.2.0: Implement descendant combinator (space) support
-// Requires: Hierarchical selector matching in query engine
+// TODO v0.5.0: Descendant combinator support requires significant architecture changes
+// Challenge: Parent pointers need to be properly set up across Arc boundaries
+// Current issue: Infinite loop in recursive matching logic
+// Defer to v0.5.0 after Phase 2 (Event Types) is complete
 #[test]
-#[ignore = "Combinator support planned for v0.2.0"]
+#[ignore = "Deferred to v0.5.0 - requires Arc/parent pointer architecture refactor"]
 fn test_descendant_combinator() {
     let mut doc = Document::new();
     let root = doc.create_element("div").unwrap();
@@ -25,10 +27,9 @@ fn test_descendant_combinator() {
     assert!(result.unwrap().is_some());
 }
 
-// TODO v0.2.0: Implement child combinator (>) support
-// Requires: Direct child matching in query engine
+// TODO v0.5.0: Child combinator support requires same architecture changes as descendant
 #[test]
-#[ignore = "Combinator support planned for v0.2.0"]
+#[ignore = "Deferred to v0.5.0 - requires Arc/parent pointer architecture refactor"]
 fn test_child_combinator() {
     let mut doc = Document::new();
     let root = doc.create_element("div").unwrap();
@@ -120,10 +121,9 @@ fn test_combined_tag_and_class() {
     assert!(result.unwrap().is_some());
 }
 
-// TODO v0.2.0: Implement complex combinator chains
-// Requires: Full combinator support in query engine
+// TODO v0.5.0: Complex combinator chains require same architecture changes
 #[test]
-#[ignore = "Combinator support planned for v0.2.0"]
+#[ignore = "Deferred to v0.5.0 - requires Arc/parent pointer architecture refactor"]
 fn test_complex_selector_tree() {
     let mut doc = Document::new();
     let root = doc.create_element("div").unwrap();

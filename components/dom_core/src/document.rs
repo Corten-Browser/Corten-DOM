@@ -68,6 +68,9 @@ impl Document {
 
         let element = Arc::new(RwLock::new(Element::new(tag)));
 
+        // Set self-reference so parent pointers work correctly
+        element.write().set_self_ref(Arc::downgrade(&element));
+
         // Register element if it has an ID
         if let Some(id) = element.read().id() {
             self.register_element_id(id, element.clone());
@@ -90,6 +93,9 @@ impl Document {
         }
 
         let element = Arc::new(RwLock::new(Element::new_with_namespace(name, ns)));
+
+        // Set self-reference so parent pointers work correctly
+        element.write().set_self_ref(Arc::downgrade(&element));
 
         if let Some(id) = element.read().id() {
             self.register_element_id(id, element.clone());
