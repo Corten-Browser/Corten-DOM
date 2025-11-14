@@ -1,0 +1,37 @@
+# Contract for dom_selectors component
+component: dom_selectors
+version: 0.1.0
+type: feature
+
+dependencies:
+  - dom-types
+  - dom-core
+  - dom-collections
+
+exports:
+  types:
+    - name: Selectable
+      kind: trait
+      methods:
+        - "query_selector(&self, selector: &str) -> Result<Option<ElementRef>, DomException>"
+        - "query_selector_all(&self, selector: &str) -> Result<NodeList, DomException>"
+        - "matches(&self, selector: &str) -> Result<bool, DomException>"
+        - "closest(&self, selector: &str) -> Result<Option<ElementRef>, DomException>"
+
+public_api:
+  - "pub trait Selectable"
+
+test_requirements:
+  - Simple selectors work (tag, class, ID)
+  - Complex selectors work (combinators)
+  - querySelector finds first match
+  - querySelectorAll finds all matches
+  - matches() correctly determines match
+  - closest() walks up tree
+
+performance_requirements:
+  - querySelector: <2ms for complex selectors
+
+critical_requirements:
+  - Use cssparser and selectors crates
+  - Correct CSS selector matching

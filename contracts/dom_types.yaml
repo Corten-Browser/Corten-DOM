@@ -1,0 +1,66 @@
+# Contract for dom_types component
+component: dom_types
+version: 0.1.0
+type: base
+
+dependencies: []
+
+exports:
+  types:
+    - name: NodeType
+      kind: enum
+      variants:
+        - Element
+        - Attribute
+        - Text
+        - CDataSection
+        - ProcessingInstruction
+        - Comment
+        - Document
+        - DocumentType
+        - DocumentFragment
+      traits:
+        - Debug
+        - Clone
+        - Copy
+        - PartialEq
+        - Eq
+        - Hash
+
+    - name: DomException
+      kind: enum
+      variants:
+        - HierarchyRequestError
+        - WrongDocumentError
+        - InvalidCharacterError
+        - NotFoundError
+        - NotSupportedError
+        - InvalidStateError
+        - SyntaxError
+        - InvalidModificationError
+        - NamespaceError
+        - SecurityError
+      traits:
+        - Debug
+        - Error
+        - Clone
+        - PartialEq
+
+    - name: NodeId
+      kind: type_alias
+      underlying: u64
+
+    - name: DocumentId
+      kind: type_alias
+      underlying: u64
+
+public_api:
+  - "pub enum NodeType"
+  - "pub enum DomException"
+  - "pub type NodeId = u64"
+  - "pub type DocumentId = u64"
+
+test_requirements:
+  - NodeType values match spec (Element=1, Text=3, etc.)
+  - DomException displays correct error messages
+  - Types are serializable (serde)

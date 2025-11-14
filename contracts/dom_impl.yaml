@@ -1,0 +1,70 @@
+# Contract for dom_impl component
+component: dom_impl
+version: 0.1.0
+type: application
+
+dependencies:
+  - dom-types
+  - dom-storage
+  - dom-core
+  - dom-collections
+  - dom-events
+  - dom-selectors
+  - dom-advanced
+
+exports:
+  re_exports:
+    - "pub use dom_types::*"
+    - "pub use dom_storage::*"
+    - "pub use dom_core::*"
+    - "pub use dom_collections::*"
+    - "pub use dom_events::*"
+    - "pub use dom_selectors::*"
+    - "pub use dom_advanced::*"
+
+  types:
+    - name: DomComponent
+      kind: struct
+      methods:
+        - "new(config: DomConfig) -> Self"
+        - "handle_message(&mut self, msg: DomComponentMessage) -> DomComponentResponse"
+
+    - name: DomComponentMessage
+      kind: enum
+      variants:
+        - ParsedDocument
+        - ScriptManipulation
+        - StyleInvalidation
+        - UserInteraction
+
+    - name: DomComponentResponse
+      kind: enum
+      variants:
+        - DomMutated
+        - DomTreeChanged
+        - LayoutInvalidated
+        - QueryResult
+
+    - name: DomConfig
+      kind: struct
+      fields:
+        - max_tree_depth
+        - max_children
+        - enable_mutation_observers
+        - enable_shadow_dom
+
+public_api:
+  - "pub struct DomComponent"
+  - "pub enum DomComponentMessage"
+  - "pub enum DomComponentResponse"
+  - "pub struct DomConfig"
+
+test_requirements:
+  - All component APIs accessible
+  - Message handling works
+  - Cross-component integration works
+
+critical_requirements:
+  - Thin integration layer (delegate to components)
+  - Message bus integration
+  - All APIs re-exported correctly
