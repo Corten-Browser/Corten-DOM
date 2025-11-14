@@ -35,7 +35,7 @@ pub type EventRef = Arc<RwLock<Event>>;
 pub type EventTargetRef = crate::event_target::EventTargetRef;
 
 /// Event struct with all DOM Level 4 properties
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Event {
     /// Type of event (e.g., "click", "load")
     event_type: String,
