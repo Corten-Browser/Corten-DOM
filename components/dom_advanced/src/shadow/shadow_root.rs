@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn test_shadow_root_creation() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let div = doc.create_element("div").unwrap();
 
         let shadow = ShadowRoot::new(
@@ -187,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_shadow_root_host() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let div = doc.create_element("div").unwrap();
 
         let shadow = ShadowRoot::new(
@@ -198,12 +198,12 @@ mod tests {
         );
 
         let host = shadow.host().unwrap();
-        assert!(host.as_node().ptr_eq(div.as_node()));
+        assert!(Arc::ptr_eq(&host, &div));
     }
 
     #[test]
     fn test_shadow_root_append_child() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let host = doc.create_element("div").unwrap();
         let child = doc.create_element("span").unwrap();
 
@@ -214,7 +214,12 @@ mod tests {
             SlotAssignmentMode::Named,
         );
 
-        shadow.append_child(child.as_node().clone()).unwrap();
+        // Convert ElementRef to NodeRef
+        let child_node = {
+            let element_clone = child.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+        shadow.append_child(child_node).unwrap();
 
         let children = shadow.children();
         assert_eq!(children.len(), 1);
@@ -222,7 +227,7 @@ mod tests {
 
     #[test]
     fn test_shadow_root_modes() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let div = doc.create_element("div").unwrap();
 
         let open_shadow = ShadowRoot::new(

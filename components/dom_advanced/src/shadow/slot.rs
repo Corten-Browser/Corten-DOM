@@ -174,7 +174,7 @@ mod tests {
 
     #[test]
     fn test_slot_creation() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let slot_elem = doc.create_element("slot").unwrap();
 
         let slot = SlotElement::new(slot_elem);
@@ -185,9 +185,9 @@ mod tests {
 
     #[test]
     fn test_slot_with_name() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let slot_elem = doc.create_element("slot").unwrap();
-        slot_elem.set_attribute("name", "header").unwrap();
+        slot_elem.write().set_attribute("name", "header").unwrap();
 
         let slot = SlotElement::new(slot_elem);
 
@@ -196,12 +196,17 @@ mod tests {
 
     #[test]
     fn test_slot_assign() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let slot_elem = doc.create_element("slot").unwrap();
         let content = doc.create_element("div").unwrap();
 
         let slot = SlotElement::new(slot_elem);
-        slot.assign(vec![content.as_node().clone()]);
+        // Convert ElementRef to NodeRef
+        let content_node = {
+            let element_clone = content.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+        slot.assign(vec![content_node]);
 
         assert_eq!(slot.assigned_nodes().len(), 1);
         assert!(slot.has_assigned_content());
@@ -209,34 +214,42 @@ mod tests {
 
     #[test]
     fn test_slot_distribution() {
-        let doc = Document::new();
+        let mut doc = Document::new();
 
         // Create slot with name "header"
         let slot_elem = doc.create_element("slot").unwrap();
-        slot_elem.set_attribute("name", "header").unwrap();
+        slot_elem.write().set_attribute("name", "header").unwrap();
         let slot = SlotElement::new(slot_elem);
 
         // Create content with matching slot attribute
         let header = doc.create_element("div").unwrap();
-        header.set_attribute("slot", "header").unwrap();
+        header.write().set_attribute("slot", "header").unwrap();
 
         // Create content without slot attribute (should not be assigned)
         let body = doc.create_element("div").unwrap();
 
-        let available = vec![header.as_node().clone(), body.as_node().clone()];
+        // Convert ElementRefs to NodeRefs
+        let header_node = {
+            let element_clone = header.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+        let body_node = {
+            let element_clone = body.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+
+        let available = vec![header_node.clone(), body_node];
 
         slot.distribute(&available);
 
         // Only header should be assigned
         assert_eq!(slot.assigned_nodes().len(), 1);
-        assert!(slot
-            .assigned_nodes()[0]
-            .ptr_eq(header.as_node()));
+        assert!(Arc::ptr_eq(&slot.assigned_nodes()[0], &header_node));
     }
 
     #[test]
     fn test_default_slot() {
-        let doc = Document::new();
+        let mut doc = Document::new();
 
         // Create unnamed (default) slot
         let slot_elem = doc.create_element("slot").unwrap();
@@ -247,27 +260,40 @@ mod tests {
 
         // Create content with named slot (should NOT go to default)
         let header = doc.create_element("div").unwrap();
-        header.set_attribute("slot", "header").unwrap();
+        header.write().set_attribute("slot", "header").unwrap();
 
-        let available = vec![content.as_node().clone(), header.as_node().clone()];
+        // Convert ElementRefs to NodeRefs
+        let content_node = {
+            let element_clone = content.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+        let header_node = {
+            let element_clone = header.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+
+        let available = vec![content_node.clone(), header_node];
 
         slot.distribute(&available);
 
         // Only unnamed content should be assigned
         assert_eq!(slot.assigned_nodes().len(), 1);
-        assert!(slot
-            .assigned_nodes()[0]
-            .ptr_eq(content.as_node()));
+        assert!(Arc::ptr_eq(&slot.assigned_nodes()[0], &content_node));
     }
 
     #[test]
     fn test_slot_fallback() {
-        let doc = Document::new();
+        let mut doc = Document::new();
         let slot_elem = doc.create_element("slot").unwrap();
         let fallback = doc.create_element("span").unwrap();
 
         let slot = SlotElement::new(slot_elem);
-        slot.add_fallback(fallback.as_node().clone());
+        // Convert ElementRef to NodeRef
+        let fallback_node = {
+            let element_clone = fallback.read().clone();
+            Arc::new(parking_lot::RwLock::new(Box::new(element_clone) as Box<dyn dom_core::Node>))
+        };
+        slot.add_fallback(fallback_node);
 
         assert_eq!(slot.fallback_nodes().len(), 1);
     }
