@@ -4,16 +4,17 @@
 //! manipulation operations.
 
 #![warn(missing_docs)]
+#![allow(dead_code)] // Allow during development
 
-pub mod node;
-pub mod element;
-pub mod document;
-pub mod text;
 pub mod comment;
+pub mod document;
+pub mod element;
+pub mod node;
+pub mod text;
 
 // Re-exports
-pub use node::{Node, NodeData, NodeRef};
-pub use element::{Element, ElementRef};
-pub use document::{Document, DocumentRef};
-pub use text::Text;
 pub use comment::Comment;
+pub use document::{Document, DocumentRef};
+pub use element::{Element, ElementRef};
+pub use node::{Node, NodeData, NodeRef, WeakNodeRef};
+pub use text::Text;

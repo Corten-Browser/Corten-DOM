@@ -1,0 +1,10 @@
+/home/user/Corten-DOM/components/dom_core/target/debug/deps/dom_types-940c845f5a3e230a.d: /home/user/Corten-DOM/components/dom_types/src/lib.rs /home/user/Corten-DOM/components/dom_types/src/error.rs /home/user/Corten-DOM/components/dom_types/src/ids.rs /home/user/Corten-DOM/components/dom_types/src/node_type.rs
+
+/home/user/Corten-DOM/components/dom_core/target/debug/deps/libdom_types-940c845f5a3e230a.rlib: /home/user/Corten-DOM/components/dom_types/src/lib.rs /home/user/Corten-DOM/components/dom_types/src/error.rs /home/user/Corten-DOM/components/dom_types/src/ids.rs /home/user/Corten-DOM/components/dom_types/src/node_type.rs
+
+/home/user/Corten-DOM/components/dom_core/target/debug/deps/libdom_types-940c845f5a3e230a.rmeta: /home/user/Corten-DOM/components/dom_types/src/lib.rs /home/user/Corten-DOM/components/dom_types/src/error.rs /home/user/Corten-DOM/components/dom_types/src/ids.rs /home/user/Corten-DOM/components/dom_types/src/node_type.rs
+
+/home/user/Corten-DOM/components/dom_types/src/lib.rs:
+/home/user/Corten-DOM/components/dom_types/src/error.rs:
+/home/user/Corten-DOM/components/dom_types/src/ids.rs:
+/home/user/Corten-DOM/components/dom_types/src/node_type.rs:
