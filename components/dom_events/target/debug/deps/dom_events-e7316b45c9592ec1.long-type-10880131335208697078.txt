@@ -1,1 +1,0 @@
-Result<std::sync::RwLockWriteGuard<'_, Event>, PoisonError<std::sync::RwLockWriteGuard<'_, Event>>>
