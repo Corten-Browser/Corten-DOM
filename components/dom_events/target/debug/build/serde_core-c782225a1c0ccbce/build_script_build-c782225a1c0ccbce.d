@@ -1,0 +1,5 @@
+/home/user/Corten-DOM/components/dom_events/target/debug/build/serde_core-c782225a1c0ccbce/build_script_build-c782225a1c0ccbce.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/build.rs
+
+/home/user/Corten-DOM/components/dom_events/target/debug/build/serde_core-c782225a1c0ccbce/build_script_build-c782225a1c0ccbce: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/build.rs
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.228/build.rs:
