@@ -79,40 +79,29 @@ impl HTMLCollection {
         // Process each child
         for child in children {
             if child.read().node_type() == NodeType::Element {
-                // The child is an element - we need to process it
-                // Since we can't easily convert NodeRef to ElementRef,
-                // we'll extract the element data and create a wrapped reference
-                let tag_name = child.read().node_name().to_string();
-
-                // Create an ElementRef that represents this child
-                // In a full implementation, we'd maintain proper bidirectional references
-                let child_element = Arc::new(RwLock::new(dom_core::Element::new(tag_name.clone())));
-
-                // Copy attributes from the node to our element representation
-                // This is a workaround - ideally we'd have direct access to the Element
-                self.collect_from_node(&child, &child_element, items);
+                // Downcast NodeRef to ElementRef using as_any()
+                if let Some(child_element) = self.downcast_to_element(&child) {
+                    // Recursively collect from this element and its children
+                    self.collect_from_element_and_children(&child_element, items);
+                }
             }
         }
     }
 
-    /// Collect from a NodeRef by creating an ElementRef representation
-    fn collect_from_node(&self, node: &NodeRef, element: &ElementRef, items: &mut Vec<ElementRef>) {
-        // Copy element data from node to element
-        // (In a real implementation, we'd have proper Element extraction)
+    /// Helper method to downcast a NodeRef to ElementRef
+    fn downcast_to_element(&self, node: &NodeRef) -> Option<ElementRef> {
+        // Lock the node to access its data
+        let node_guard = node.read();
 
-        // Check if this element matches (after we've set it up)
-        if (self.filter)(element) {
-            items.push(element.clone());
-        }
-
-        // Recursively process children
-        let children = node.read().child_nodes();
-        for child in children {
-            if child.read().node_type() == NodeType::Element {
-                let tag_name = child.read().node_name().to_string();
-                let child_element = Arc::new(RwLock::new(dom_core::Element::new(tag_name)));
-                self.collect_from_node(&child, &child_element, items);
-            }
+        // Use as_any() to downcast Box<dyn Node> to concrete Element
+        if let Some(element) = node_guard.as_any().downcast_ref::<dom_core::Element>() {
+            // We found an Element! Clone it to create a new ElementRef
+            // This preserves all attributes and properties
+            let cloned_element = element.clone();
+            drop(node_guard); // Release the lock before creating new Arc
+            Some(Arc::new(RwLock::new(cloned_element)))
+        } else {
+            None
         }
     }
 
