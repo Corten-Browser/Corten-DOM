@@ -14,6 +14,7 @@ pub mod document_fragment;
 pub mod document_type;
 pub mod dom_implementation;
 pub mod element;
+pub mod html5_validation;
 pub mod namespaces;
 pub mod node;
 pub mod processing_instruction;

@@ -1,6 +1,7 @@
 //! Element node implementation
 
 use crate::attr::{Attr, AttrRef};
+use crate::html5_validation::validate_html5_attribute_name;
 use crate::node::{Node, NodeData, NodeRef};
 use dom_types::{DomException, NodeType};
 use indexmap::IndexMap;
@@ -93,10 +94,8 @@ impl Element {
         let name = name.into();
         let value = value.into();
 
-        // Validate attribute name
-        if !is_valid_attribute_name(&name) {
-            return Err(DomException::InvalidCharacterError);
-        }
+        // Validate attribute name using HTML5 rules
+        validate_html5_attribute_name(&name)?;
 
         // Handle special attributes
         if name == "class" {
@@ -435,22 +434,6 @@ impl Clone for Element {
     }
 }
 
-/// Validates an attribute name
-fn is_valid_attribute_name(name: &str) -> bool {
-    if name.is_empty() {
-        return false;
-    }
-
-    // Attribute names must start with a letter or underscore
-    let first_char = name.chars().next().unwrap();
-    if !first_char.is_alphabetic() && first_char != '_' {
-        return false;
-    }
-
-    // Subsequent characters can be letters, digits, hyphens, underscores
-    name.chars()
-        .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
-}
 
 #[cfg(test)]
 mod tests {

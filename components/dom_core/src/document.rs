@@ -3,6 +3,7 @@
 use crate::attr::{Attr, AttrRef};
 use crate::comment::Comment;
 use crate::element::{Element, ElementRef};
+use crate::html5_validation::{validate_html5_attribute_name, validate_html5_tag_name};
 use crate::node::{Node, NodeData, NodeRef};
 use crate::text::Text;
 use dom_types::{DomException, NodeType};
@@ -61,10 +62,8 @@ impl Document {
     ) -> Result<ElementRef, DomException> {
         let tag = tag_name.into();
 
-        // Validate tag name
-        if !is_valid_tag_name(&tag) {
-            return Err(DomException::InvalidCharacterError);
-        }
+        // Validate tag name using HTML5 rules
+        validate_html5_tag_name(&tag)?;
 
         let element = Arc::new(RwLock::new(Element::new(tag)));
 
@@ -88,9 +87,8 @@ impl Document {
         let name = qualified_name.into();
         let ns = namespace.into();
 
-        if !is_valid_tag_name(&name) {
-            return Err(DomException::InvalidCharacterError);
-        }
+        // Validate tag name using HTML5 rules
+        validate_html5_tag_name(&name)?;
 
         let element = Arc::new(RwLock::new(Element::new_with_namespace(name, ns)));
 
@@ -146,10 +144,8 @@ impl Document {
     ) -> Result<AttrRef, DomException> {
         let name_str = name.into();
 
-        // Validate attribute name (use same validation as tag names)
-        if !is_valid_tag_name(&name_str) {
-            return Err(DomException::InvalidCharacterError);
-        }
+        // Validate attribute name using HTML5 rules
+        validate_html5_attribute_name(&name_str)?;
 
         // Create attribute with empty value initially
         let attr = Attr::new(name_str, "");
@@ -184,10 +180,8 @@ impl Document {
 
         // If no namespace, create a regular attribute
         let Some(ns) = namespace else {
-            // No namespace - just validate as regular name
-            if !is_valid_tag_name(&qname) {
-                return Err(DomException::InvalidCharacterError);
-            }
+            // No namespace - validate using HTML5 attribute rules
+            validate_html5_attribute_name(&qname)?;
             let attr = Attr::new(qname, "");
             return Ok(Arc::new(RwLock::new(attr)));
         };
@@ -539,21 +533,6 @@ impl Clone for Document {
     }
 }
 
-/// Validates a tag name
-fn is_valid_tag_name(name: &str) -> bool {
-    if name.is_empty() {
-        return false;
-    }
-
-    // Tag names must start with a letter
-    let first_char = name.chars().next().unwrap();
-    if !first_char.is_alphabetic() {
-        return false;
-    }
-
-    // Subsequent characters can be letters, digits, or hyphens
-    name.chars().all(|c| c.is_alphanumeric() || c == '-')
-}
 
 #[cfg(test)]
 mod tests {
