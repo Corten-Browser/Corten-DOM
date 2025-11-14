@@ -5,6 +5,7 @@
 use dom_core::NodeRef;
 use dom_types::{DomException, NodeType};
 use std::cmp::Ordering;
+use std::sync::Arc;
 
 /// A Range represents a fragment of a document
 #[derive(Debug, Clone)]
@@ -58,30 +59,42 @@ impl Range {
 
     /// Check if the range is collapsed (start equals end)
     pub fn collapsed(&self) -> bool {
-        self.start_container.ptr_eq(&self.end_container) && self.start_offset == self.end_offset
+        Arc::ptr_eq(&self.start_container, &self.end_container) && self.start_offset == self.end_offset
     }
 
     /// Get the common ancestor container of both boundary points
     pub fn common_ancestor_container(&self) -> NodeRef {
-        if self.start_container.ptr_eq(&self.end_container) {
+        if Arc::ptr_eq(&self.start_container, &self.end_container) {
             return self.start_container.clone();
         }
 
         // Find common ancestor by traversing up from start
         let mut ancestors = Vec::new();
         let mut current = self.start_container.clone();
-        while let Some(parent) = current.parent_node() {
-            ancestors.push(parent.clone());
-            current = parent;
+        loop {
+            let parent = current.read().parent_node();
+            match parent {
+                Some(p) => {
+                    ancestors.push(p.clone());
+                    current = p;
+                }
+                None => break,
+            }
         }
 
         // Traverse up from end until we find a common ancestor
         let mut current = self.end_container.clone();
-        while let Some(parent) = current.parent_node() {
-            if ancestors.iter().any(|a| a.ptr_eq(&parent)) {
-                return parent;
+        loop {
+            let parent = current.read().parent_node();
+            match parent {
+                Some(p) => {
+                    if ancestors.iter().any(|a| Arc::ptr_eq(a, &p)) {
+                        return p;
+                    }
+                    current = p;
+                }
+                None => break,
             }
-            current = parent;
         }
 
         // Should not reach here if both nodes are in the same document
@@ -166,7 +179,7 @@ impl Range {
     pub fn extract_contents(&mut self) -> Result<dom_core::DocumentFragment, DomException> {
         // For now, return a simple implementation
         // A full implementation would need to handle partial text nodes
-        let fragment = dom_core::DocumentFragment::new();
+        let mut fragment = dom_core::DocumentFragment::new();
 
         if self.collapsed() {
             return Ok(fragment);
@@ -303,7 +316,7 @@ impl Range {
         b_node: &NodeRef,
         b_offset: usize,
     ) -> Ordering {
-        if a_node.ptr_eq(b_node) {
+        if Arc::ptr_eq(a_node, b_node) {
             return a_offset.cmp(&b_offset);
         }
 

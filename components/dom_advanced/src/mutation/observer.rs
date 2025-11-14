@@ -73,7 +73,7 @@ impl MutationObserver {
         if let Some(observed) = inner
             .observed_nodes
             .iter_mut()
-            .find(|n| n.node.ptr_eq(&WeakNodeRef::from(target.clone())))
+            .find(|n| n.node.ptr_eq(&Arc::downgrade(&target)))
         {
             observed.options = options;
             return Ok(());
@@ -81,7 +81,7 @@ impl MutationObserver {
 
         // Add new observation
         inner.observed_nodes.push(ObservedNode {
-            node: WeakNodeRef::from(target),
+            node: Arc::downgrade(&target),
             options,
         });
 

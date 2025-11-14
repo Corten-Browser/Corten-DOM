@@ -6,7 +6,7 @@ use parking_lot::RwLock;
 use std::sync::Arc;
 
 /// A DocumentFragment is a minimal document object that has no parent
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DocumentFragment {
     node_data: NodeData,
     children: Vec<NodeRef>,
@@ -147,6 +147,10 @@ impl Node for DocumentFragment {
         let self_ptr = self as *const _ as *const dyn Node;
         let other_ptr = other as *const dyn Node;
         std::ptr::addr_eq(self_ptr, other_ptr)
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 

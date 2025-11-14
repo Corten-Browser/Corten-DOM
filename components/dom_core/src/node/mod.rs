@@ -12,7 +12,7 @@ pub type NodeRef = Arc<RwLock<Box<dyn Node>>>;
 pub type WeakNodeRef = Weak<RwLock<Box<dyn Node>>>;
 
 /// Core node trait that all DOM nodes must implement
-pub trait Node: Send + Sync {
+pub trait Node: Send + Sync + std::fmt::Debug {
     /// Returns the type of this node
     fn node_type(&self) -> NodeType;
 
@@ -130,10 +130,13 @@ pub trait Node: Send + Sync {
 
     /// Mutable access to internal node data
     fn node_data_mut(&mut self) -> &mut NodeData;
+
+    /// Downcast to concrete type (for type checking)
+    fn as_any(&self) -> &dyn std::any::Any;
 }
 
 /// Common data shared by all node types
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct NodeData {
     /// Node type
     pub node_type: NodeType,

@@ -10,6 +10,7 @@ use parking_lot::RwLock;
 use std::sync::Arc;
 
 /// Document node implementation
+#[derive(Debug)]
 pub struct Document {
     /// Base node data
     node_data: NodeData,
@@ -355,6 +356,10 @@ impl Node for Document {
         }
 
         false
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 

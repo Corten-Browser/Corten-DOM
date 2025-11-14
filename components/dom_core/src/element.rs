@@ -7,6 +7,7 @@ use parking_lot::RwLock;
 use std::sync::Arc;
 
 /// Element node implementation
+#[derive(Debug)]
 pub struct Element {
     /// Base node data
     node_data: NodeData,
@@ -320,6 +321,10 @@ impl Node for Element {
         }
 
         false
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 

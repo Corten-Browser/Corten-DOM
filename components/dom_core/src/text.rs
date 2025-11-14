@@ -6,7 +6,7 @@ use parking_lot::RwLock;
 use std::sync::Arc;
 
 /// Text node containing character data
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Text {
     /// Base node data
     node_data: NodeData,
@@ -166,6 +166,10 @@ impl Node for Text {
         let self_ptr = self as *const _ as *const dyn Node;
         let other_ptr = other as *const dyn Node;
         self_ptr == other_ptr
+    }
+
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
     }
 }
 

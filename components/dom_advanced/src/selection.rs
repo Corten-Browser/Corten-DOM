@@ -5,6 +5,7 @@
 use crate::range::Range;
 use dom_core::NodeRef;
 use dom_types::DomException;
+use std::sync::Arc;
 
 /// Direction of selection
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -112,9 +113,9 @@ impl Selection {
         // Find and remove the range
         // Compare by boundary points
         self.ranges.retain(|r| {
-            !(r.start_container().ptr_eq(range.start_container())
+            !(Arc::ptr_eq(r.start_container(), range.start_container())
                 && r.start_offset() == range.start_offset()
-                && r.end_container().ptr_eq(range.end_container())
+                && Arc::ptr_eq(r.end_container(), range.end_container())
                 && r.end_offset() == range.end_offset())
         });
         Ok(())
