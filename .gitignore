@@ -40,3 +40,4 @@ Thumbs.db
 target/
 **/target/
 Cargo.lock
+target/
