@@ -5,15 +5,15 @@
 
 #![warn(missing_docs)]
 
-pub mod html_collection;
-pub mod node_list;
 pub mod dom_token_list;
+pub mod html_collection;
 pub mod node_iterator;
+pub mod node_list;
 pub mod tree_walker;
 
 // Re-exports
-pub use html_collection::HTMLCollection;
-pub use node_list::NodeList;
 pub use dom_token_list::DOMTokenList;
+pub use html_collection::HTMLCollection;
 pub use node_iterator::NodeIterator;
+pub use node_list::NodeList;
 pub use tree_walker::TreeWalker;

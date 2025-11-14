@@ -26,7 +26,3 @@ proptest = "1.4"
 
 [features]
 default = []
-
-[[bench]]
-name = "collection_operations"
-harness = false
