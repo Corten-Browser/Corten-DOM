@@ -1,0 +1,56 @@
+# Contract for dom_events component
+component: dom_events
+version: 0.1.0
+type: feature
+
+dependencies:
+  - dom-types
+  - dom-core
+
+exports:
+  types:
+    - name: Event
+      kind: struct
+      methods:
+        - "new(event_type: &str, init: EventInit) -> Self"
+        - "prevent_default(&mut self)"
+        - "stop_propagation(&mut self)"
+        - "stop_immediate_propagation(&mut self)"
+        - "event_type(&self) -> &str"
+        - "target(&self) -> Option<EventTargetRef>"
+        - "bubbles(&self) -> bool"
+
+    - name: EventTarget
+      kind: trait
+      methods:
+        - "add_event_listener(&mut self, type: &str, listener: EventListener, options: AddEventListenerOptions)"
+        - "remove_event_listener(&mut self, type: &str, listener: EventListener)"
+        - "dispatch_event(&mut self, event: EventRef) -> Result<bool, DomException>"
+
+    - name: EventDispatcher
+      kind: struct
+      methods:
+        - "dispatch(event: EventRef, target: EventTargetRef) -> Result<bool, DomException>"
+
+    - name: EventListener
+      kind: enum
+      variants:
+        - Function
+        - Object
+
+public_api:
+  - "pub struct Event"
+  - "pub trait EventTarget"
+  - "pub struct EventDispatcher"
+  - "pub enum EventListener"
+
+test_requirements:
+  - Event dispatch works (capture/target/bubble)
+  - stop_propagation stops correctly
+  - Event listeners fire in correct order
+  - preventDefault works
+
+critical_requirements:
+  - Correct capture/bubble phase order
+  - Event path calculation correct
+  - Thread-safe event dispatch

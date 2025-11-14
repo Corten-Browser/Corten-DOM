@@ -1,0 +1,88 @@
+# Contract for dom_core component
+component: dom_core
+version: 0.1.0
+type: core
+
+dependencies:
+  - dom-types
+  - dom-storage
+
+exports:
+  types:
+    - name: Node
+      kind: trait
+      methods:
+        - "node_type(&self) -> NodeType"
+        - "node_name(&self) -> &str"
+        - "node_value(&self) -> Option<&str>"
+        - "text_content(&self) -> Option<String>"
+        - "parent_node(&self) -> Option<NodeRef>"
+        - "child_nodes(&self) -> Vec<NodeRef>"
+        - "first_child(&self) -> Option<NodeRef>"
+        - "last_child(&self) -> Option<NodeRef>"
+        - "append_child(&mut self, child: NodeRef) -> Result<NodeRef, DomException>"
+        - "remove_child(&mut self, child: NodeRef) -> Result<NodeRef, DomException>"
+        - "insert_before(&mut self, new_child: NodeRef, ref_child: Option<NodeRef>) -> Result<NodeRef, DomException>"
+        - "clone_node(&self, deep: bool) -> NodeRef"
+        - "contains(&self, other: &dyn Node) -> bool"
+
+    - name: Element
+      kind: struct
+      methods:
+        - "new(tag_name: &str) -> Self"
+        - "get_attribute(&self, name: &str) -> Option<&str>"
+        - "set_attribute(&mut self, name: &str, value: &str) -> Result<(), DomException>"
+        - "remove_attribute(&mut self, name: &str) -> Result<(), DomException>"
+        - "has_attribute(&self, name: &str) -> bool"
+        - "get_elements_by_tag_name(&self, tag_name: &str) -> Vec<ElementRef>"
+        - "get_elements_by_class_name(&self, class_names: &str) -> Vec<ElementRef>"
+      implements:
+        - Node
+
+    - name: Document
+      kind: struct
+      methods:
+        - "new() -> Self"
+        - "create_element(&mut self, tag_name: &str) -> Result<ElementRef, DomException>"
+        - "create_text_node(&mut self, data: &str) -> TextRef"
+        - "create_comment(&mut self, data: &str) -> CommentRef"
+        - "create_document_fragment(&mut self) -> DocumentFragmentRef"
+        - "get_element_by_id(&self, id: &str) -> Option<ElementRef>"
+        - "get_elements_by_tag_name(&self, tag_name: &str) -> Vec<ElementRef>"
+      implements:
+        - Node
+
+    - name: NodeRef
+      kind: type_alias
+      underlying: "Arc<RefCell<Box<dyn Node>>>"
+
+    - name: ElementRef
+      kind: type_alias
+      underlying: "Arc<RefCell<Element>>"
+
+    - name: DocumentRef
+      kind: type_alias
+      underlying: "Arc<RefCell<Document>>"
+
+public_api:
+  - "pub trait Node"
+  - "pub struct Element"
+  - "pub struct Document"
+  - "pub struct Text"
+  - "pub struct Comment"
+  - "pub type NodeRef"
+  - "pub type ElementRef"
+  - "pub type DocumentRef"
+
+test_requirements:
+  - Node creation works correctly
+  - Tree operations (append, remove, insert) work
+  - Hierarchy validation (no circular refs)
+  - Attribute operations work
+  - Element lookup by ID/tag/class works
+  - Node cloning (deep and shallow)
+
+critical_requirements:
+  - Thread-safe (Arc<RefCell<>>)
+  - No circular references
+  - Proper error handling

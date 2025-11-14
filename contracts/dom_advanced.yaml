@@ -1,0 +1,69 @@
+# Contract for dom_advanced component
+component: dom_advanced
+version: 0.1.0
+type: feature
+
+dependencies:
+  - dom-types
+  - dom-core
+  - dom-events
+
+exports:
+  types:
+    - name: MutationObserver
+      kind: struct
+      methods:
+        - "new(callback: Box<dyn Fn(&[MutationRecord], &MutationObserver) + Send + Sync>) -> Self"
+        - "observe(&mut self, target: NodeRef, options: MutationObserverInit) -> Result<(), DomException>"
+        - "disconnect(&mut self)"
+        - "take_records(&mut self) -> Vec<MutationRecord>"
+
+    - name: MutationRecord
+      kind: struct
+      fields:
+        - record_type
+        - target
+        - added_nodes
+        - removed_nodes
+        - attribute_name
+        - old_value
+
+    - name: Range
+      kind: struct
+      methods:
+        - "new(document: &Document) -> Self"
+        - "set_start(&mut self, node: NodeRef, offset: usize) -> Result<(), DomException>"
+        - "set_end(&mut self, node: NodeRef, offset: usize) -> Result<(), DomException>"
+        - "extract_contents(&mut self) -> Result<DocumentFragmentRef, DomException>"
+        - "delete_contents(&mut self) -> Result<(), DomException>"
+
+    - name: ShadowRoot
+      kind: struct
+      methods:
+        - "new(host: ElementRef, mode: ShadowRootMode) -> Self"
+        - "host(&self) -> ElementRef"
+        - "mode(&self) -> ShadowRootMode"
+
+    - name: ShadowRootMode
+      kind: enum
+      variants:
+        - Open
+        - Closed
+
+public_api:
+  - "pub struct MutationObserver"
+  - "pub struct MutationRecord"
+  - "pub struct Range"
+  - "pub struct Selection"
+  - "pub struct ShadowRoot"
+  - "pub enum ShadowRootMode"
+
+test_requirements:
+  - MutationObserver detects mutations
+  - Range operations work correctly
+  - Shadow DOM attachment works
+  - Event retargeting for shadow DOM
+
+critical_requirements:
+  - Async mutation delivery (microtask)
+  - Correct range boundary handling

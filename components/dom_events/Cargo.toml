@@ -1,0 +1,36 @@
+[package]
+name = "dom-events"
+version = "0.1.0"
+edition = "2021"
+authors = ["CortenBrowser Team"]
+description = "Event system with dispatch and bubbling for DOM"
+
+[dependencies]
+# Internal dependencies
+dom-types = { path = "../dom_types" }
+dom-core = { path = "../dom_core" }
+
+# Async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# Data structures
+dashmap = "5.5"
+smallvec = "1.11"
+
+# Thread safety
+parking_lot = "0.12"
+crossbeam = "0.8"
+
+# Error handling
+thiserror = "1.0"
+
+[dev-dependencies]
+criterion = "0.5"
+proptest = "1.4"
+
+[features]
+default = []
+
+[[bench]]
+name = "event_dispatch"
+harness = false

@@ -1,0 +1,50 @@
+# Contract for dom_storage component
+component: dom_storage
+version: 0.1.0
+type: core
+
+dependencies:
+  - dom-types
+
+exports:
+  types:
+    - name: NodeArena
+      kind: struct
+      methods:
+        - "new() -> Self"
+        - "with_capacity(capacity: usize) -> Self"
+        - "allocate<T: Any + Send + Sync>(&self, node: T) -> NodeId"
+        - "get(&self, id: NodeId) -> Option<Arc<dyn Any>>"
+        - "deallocate(&self, id: NodeId)"
+        - "compact(&mut self)"
+        - "fragmentation(&self) -> f64"
+      thread_safe: true
+
+    - name: WeakNodeRef
+      kind: struct
+      methods:
+        - "upgrade(&self) -> Option<Arc<dyn Any>>"
+
+    - name: GarbageCollector
+      kind: trait
+      methods:
+        - "collect(&mut self)"
+        - "mark_reachable(&self, node_id: NodeId, reachable: &mut HashSet<NodeId>)"
+        - "sweep(&mut self, predicate: impl Fn(NodeId) -> bool)"
+
+public_api:
+  - "pub struct NodeArena"
+  - "pub struct WeakNodeRef"
+  - "pub trait GarbageCollector"
+
+test_requirements:
+  - Arena allocation and retrieval works
+  - Thread-safe concurrent operations
+  - Generation prevents use-after-free
+  - GC correctly removes unreachable nodes
+  - No memory leaks (valgrind)
+
+performance_requirements:
+  - Allocation: <100ns
+  - Deallocation: <100ns
+  - GC (10k nodes): <10ms

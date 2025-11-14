@@ -1,0 +1,65 @@
+# Contract for dom_collections component
+component: dom_collections
+version: 0.1.0
+type: feature
+
+dependencies:
+  - dom-types
+  - dom-core
+
+exports:
+  types:
+    - name: HTMLCollection
+      kind: struct
+      live: true
+      methods:
+        - "length(&self) -> usize"
+        - "item(&self, index: usize) -> Option<ElementRef>"
+        - "named_item(&self, name: &str) -> Option<ElementRef>"
+
+    - name: NodeList
+      kind: enum
+      variants:
+        - Live
+        - Static
+      methods:
+        - "length(&self) -> usize"
+        - "item(&self, index: usize) -> Option<NodeRef>"
+
+    - name: DOMTokenList
+      kind: struct
+      methods:
+        - "add(&mut self, tokens: &[&str]) -> Result<(), DomException>"
+        - "remove(&mut self, tokens: &[&str]) -> Result<(), DomException>"
+        - "toggle(&mut self, token: &str) -> Result<bool, DomException>"
+        - "contains(&self, token: &str) -> bool"
+
+    - name: NodeIterator
+      kind: struct
+      methods:
+        - "next_node(&mut self) -> Option<NodeRef>"
+        - "previous_node(&mut self) -> Option<NodeRef>"
+
+    - name: TreeWalker
+      kind: struct
+      methods:
+        - "parent_node(&mut self) -> Option<NodeRef>"
+        - "first_child(&mut self) -> Option<NodeRef>"
+        - "next_sibling(&mut self) -> Option<NodeRef>"
+
+public_api:
+  - "pub struct HTMLCollection"
+  - "pub enum NodeList"
+  - "pub struct DOMTokenList"
+  - "pub struct NodeIterator"
+  - "pub struct TreeWalker"
+
+test_requirements:
+  - Live collections update when DOM changes
+  - Static collections don't update
+  - TreeWalker traverses correctly
+  - NodeIterator iterates in document order
+
+critical_requirements:
+  - Collections are live (track DOM changes)
+  - Weak references to avoid cycles
