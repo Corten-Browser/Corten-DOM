@@ -25,6 +25,10 @@ enum Combinator {
     Descendant,
     /// Child combinator (">")
     Child,
+    /// Adjacent sibling combinator ("+")
+    AdjacentSibling,
+    /// General sibling combinator ("~")
+    GeneralSibling,
 }
 
 /// A component of a CSS selector
@@ -120,6 +124,25 @@ impl SelectorMatcher {
                 }
                 Ok(false)
             }
+            Combinator::AdjacentSibling => {
+                // Immediately preceding sibling must match remaining segments
+                if let Some(prev_sibling) = Self::get_previous_element_sibling(element) {
+                    if Self::node_matches_segments(&prev_sibling, remaining_segments, self)? {
+                        return Ok(true);
+                    }
+                }
+                Ok(false)
+            }
+            Combinator::GeneralSibling => {
+                // Any preceding sibling must match remaining segments
+                let siblings = Self::get_previous_element_siblings(element);
+                for sibling in siblings {
+                    if Self::node_matches_segments(&sibling, remaining_segments, self)? {
+                        return Ok(true);
+                    }
+                }
+                Ok(false)
+            }
         }
     }
 
@@ -195,22 +218,58 @@ impl SelectorMatcher {
         true
     }
 
-    /// Convert NodeRef to ElementRef if it's an element
-    fn node_to_element(node: &NodeRef) -> Option<ElementRef> {
-        let node_guard = node.read();
-        if node_guard.node_type() != NodeType::Element {
-            return None;
+    /// Get all previous element siblings (in reverse order, closest first)
+    fn get_previous_element_siblings(element: &ElementRef) -> Vec<NodeRef> {
+        let parent = match element.read().parent_node() {
+            Some(p) => p,
+            None => return Vec::new(),
+        };
+
+        let parent_guard = parent.read();
+        let children = parent_guard.child_nodes();
+
+        // Find the index of this element in parent's children
+        // Use pointer comparison on the element itself
+        let element_guard = element.read();
+        let element_ptr = &*element_guard as *const dom_core::Element as *const ();
+        drop(element_guard);
+
+        let mut element_index = None;
+
+        for (i, child) in children.iter().enumerate() {
+            let child_guard = child.read();
+            if child_guard.node_type() == NodeType::Element {
+                // Try to downcast to Element
+                if let Some(child_elem) = child_guard.as_any().downcast_ref::<dom_core::Element>() {
+                    let child_ptr = child_elem as *const dom_core::Element as *const ();
+                    if element_ptr == child_ptr {
+                        element_index = Some(i);
+                        break;
+                    }
+                }
+            }
         }
 
-        if let Some(element) = node_guard.as_any().downcast_ref::<dom_core::Element>() {
-            let element_clone = element.clone();
-            drop(node_guard);
-            Some(std::sync::Arc::new(parking_lot::RwLock::new(
-                element_clone,
-            )))
-        } else {
-            None
+        let index = match element_index {
+            Some(i) => i,
+            None => return Vec::new(),
+        };
+
+        // Collect all previous element siblings (reverse order)
+        let mut siblings = Vec::new();
+        for i in (0..index).rev() {
+            let child = &children[i];
+            if child.read().node_type() == NodeType::Element {
+                siblings.push(child.clone());
+            }
         }
+
+        siblings
+    }
+
+    /// Get immediately previous element sibling
+    fn get_previous_element_sibling(element: &ElementRef) -> Option<NodeRef> {
+        Self::get_previous_element_siblings(element).first().cloned()
     }
 
     /// Check if an element matches a single segment (no combinators)
@@ -380,6 +439,36 @@ impl SelectorMatcher {
                     }
                 }
 
+                // Combinator: adjacent sibling (+)
+                '+' => {
+                    if !current.is_empty() {
+                        Self::parse_component(&current, &mut current_components)?;
+                        current.clear();
+                    }
+                    if !current_components.is_empty() {
+                        segments.push(SelectorSegment {
+                            components: current_components.clone(),
+                            combinator: Some(Combinator::AdjacentSibling),
+                        });
+                        current_components.clear();
+                    }
+                }
+
+                // Combinator: general sibling (~)
+                '~' => {
+                    if !current.is_empty() {
+                        Self::parse_component(&current, &mut current_components)?;
+                        current.clear();
+                    }
+                    if !current_components.is_empty() {
+                        segments.push(SelectorSegment {
+                            components: current_components.clone(),
+                            combinator: Some(Combinator::GeneralSibling),
+                        });
+                        current_components.clear();
+                    }
+                }
+
                 // Whitespace (descendant combinator)
                 ' ' | '\t' | '\n' => {
                     if !current.is_empty() {
@@ -388,11 +477,11 @@ impl SelectorMatcher {
                     }
                     // Only add descendant combinator if we have components
                     if !current_components.is_empty() {
-                        // Check if next non-whitespace is '>' (child combinator)
-                        let mut is_child_combinator = false;
+                        // Check if next non-whitespace is a combinator (>, +, ~)
+                        let mut is_explicit_combinator = false;
                         while let Some(&next_ch) = chars.peek() {
-                            if next_ch == '>' {
-                                is_child_combinator = true;
+                            if next_ch == '>' || next_ch == '+' || next_ch == '~' {
+                                is_explicit_combinator = true;
                                 break;
                             } else if !next_ch.is_whitespace() {
                                 break;
@@ -400,7 +489,7 @@ impl SelectorMatcher {
                             chars.next();
                         }
 
-                        if !is_child_combinator {
+                        if !is_explicit_combinator {
                             segments.push(SelectorSegment {
                                 components: current_components.clone(),
                                 combinator: Some(Combinator::Descendant),
@@ -600,5 +689,40 @@ mod tests {
         let matcher = SelectorMatcher::new("div > ul").unwrap();
         assert_eq!(matcher.segments.len(), 2);
         assert_eq!(matcher.segments[0].combinator, Some(Combinator::Child));
+    }
+
+    #[test]
+    fn test_parse_adjacent_sibling_combinator() {
+        let matcher = SelectorMatcher::new("h1 + p").unwrap();
+        assert_eq!(matcher.segments.len(), 2);
+        assert_eq!(
+            matcher.segments[0].combinator,
+            Some(Combinator::AdjacentSibling)
+        );
+    }
+
+    #[test]
+    fn test_parse_general_sibling_combinator() {
+        let matcher = SelectorMatcher::new("h1 ~ p").unwrap();
+        assert_eq!(matcher.segments.len(), 2);
+        assert_eq!(
+            matcher.segments[0].combinator,
+            Some(Combinator::GeneralSibling)
+        );
+    }
+
+    #[test]
+    fn test_parse_multiple_combinators() {
+        let matcher = SelectorMatcher::new("div > ul li + span").unwrap();
+        assert_eq!(matcher.segments.len(), 4);
+        assert_eq!(matcher.segments[0].combinator, Some(Combinator::Child));
+        assert_eq!(
+            matcher.segments[1].combinator,
+            Some(Combinator::Descendant)
+        );
+        assert_eq!(
+            matcher.segments[2].combinator,
+            Some(Combinator::AdjacentSibling)
+        );
     }
 }
