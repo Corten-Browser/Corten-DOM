@@ -1,0 +1,11 @@
+{
+  "project_name": "Corten-DOM",
+  "version": "0.1.0",
+  "lifecycle_state": "pre-release",
+  "breaking_changes_policy": "encouraged",
+  "api_locked": false,
+  "description": "DOM Level 4 Implementation for CortenBrowser",
+  "language": "rust",
+  "created": "2025-11-14",
+  "last_updated": "2025-11-14"
+}
