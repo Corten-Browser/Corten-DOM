@@ -1,10 +1,11 @@
 //! Element node implementation
 
+use crate::attr::{Attr, AttrRef};
 use crate::node::{Node, NodeData, NodeRef};
 use dom_types::{DomException, NodeType};
 use indexmap::IndexMap;
 use parking_lot::RwLock;
-use std::sync::Arc;
+use std::sync::{Arc, Weak};
 
 /// Element node implementation
 #[derive(Debug)]
@@ -26,6 +27,9 @@ pub struct Element {
 
     /// Element ID (if any)
     id: Option<String>,
+
+    /// Self-reference for attribute owner tracking (weak to avoid cycles)
+    self_ref: Option<Weak<RwLock<Element>>>,
 }
 
 /// Thread-safe reference to an Element
@@ -42,6 +46,7 @@ impl Element {
             attributes: IndexMap::new(),
             class_list: Vec::new(),
             id: None,
+            self_ref: None,
         }
     }
 
@@ -55,7 +60,13 @@ impl Element {
             attributes: IndexMap::new(),
             class_list: Vec::new(),
             id: None,
+            self_ref: None,
         }
+    }
+
+    /// Sets the self-reference for this element (called after wrapping in Arc<RwLock<>>)
+    pub fn set_self_ref(&mut self, self_ref: Weak<RwLock<Element>>) {
+        self.self_ref = Some(self_ref);
     }
 
     /// Gets the tag name (always uppercase)
@@ -118,6 +129,80 @@ impl Element {
     /// Gets all attributes
     pub fn attributes(&self) -> &IndexMap<String, String> {
         &self.attributes
+    }
+
+    /// Gets an attribute node by name
+    pub fn get_attribute_node(&self, name: &str) -> Option<AttrRef> {
+        // Check if attribute exists in the attributes map
+        let value = self.attributes.get(name)?;
+
+        // Create a new Attr with the name and value
+        let mut attr = Attr::new(name, value);
+
+        // Set the owner element weak reference if we have self_ref
+        if let Some(ref self_weak) = self.self_ref {
+            attr.set_owner_element(Some(self_weak.clone()));
+        }
+
+        let attr_ref = Arc::new(RwLock::new(attr));
+
+        Some(attr_ref)
+    }
+
+    /// Sets an attribute node
+    ///
+    /// # Errors
+    /// Returns `DomException::InvalidStateError` if the attribute is already
+    /// owned by a different element.
+    pub fn set_attribute_node(
+        &mut self,
+        attr: AttrRef,
+    ) -> Result<Option<AttrRef>, DomException> {
+        let attr_guard = attr.read();
+        let attr_name = attr_guard.name().to_string();
+        let attr_value = attr_guard.value().to_string();
+
+        // Check if attr already has an owner element
+        if let Some(owner) = attr_guard.owner_element() {
+            // Check if it's a different element by comparing weak pointers
+            if let Some(ref self_weak) = self.self_ref {
+                // Try to upgrade self_weak to compare
+                if let Some(self_arc) = self_weak.upgrade() {
+                    // Compare Arc pointers
+                    if !Arc::ptr_eq(&owner, &self_arc) {
+                        return Err(DomException::InvalidStateError);
+                    }
+                }
+            } else {
+                // If we don't have self_ref but attr has an owner, it must be a different element
+                return Err(DomException::InvalidStateError);
+            }
+        }
+        drop(attr_guard);
+
+        // Get the old attribute value if it exists
+        let old_attr = if self.attributes.contains_key(&attr_name) {
+            // Create an Attr node for the old attribute
+            let old_value = self.attributes.get(&attr_name).unwrap();
+            let mut old_attr_node = Attr::new(&attr_name, old_value);
+            // Set owner element on old attr if we have self_ref
+            if let Some(ref self_weak) = self.self_ref {
+                old_attr_node.set_owner_element(Some(self_weak.clone()));
+            }
+            Some(Arc::new(RwLock::new(old_attr_node)))
+        } else {
+            None
+        };
+
+        // Set the attribute using the existing set_attribute method
+        self.set_attribute(&attr_name, &attr_value)?;
+
+        // Set the owner element on the new attr
+        if let Some(ref self_weak) = self.self_ref {
+            attr.write().set_owner_element(Some(self_weak.clone()));
+        }
+
+        Ok(old_attr)
     }
 
     /// Gets the class list
@@ -337,6 +422,7 @@ impl Clone for Element {
             attributes: self.attributes.clone(),
             class_list: self.class_list.clone(),
             id: self.id.clone(),
+            self_ref: None, // Don't clone self-reference
         }
     }
 }

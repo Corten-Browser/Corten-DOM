@@ -3,8 +3,8 @@
 use dom_core::node::{Node, NodeData, NodeRef};
 use dom_core::Element;
 use dom_types::{DomException, NodeType};
-use std::sync::{Arc, Weak};
 use parking_lot::RwLock;
+use std::sync::{Arc, Weak};
 
 fn create_element_node(tag: &str) -> NodeRef {
     Arc::new(RwLock::new(Box::new(Element::new(tag)) as Box<dyn Node>))
@@ -117,7 +117,10 @@ fn test_insert_before() {
     parent.write().append_child(child2.clone()).unwrap();
 
     // Insert child3 before child2
-    parent.write().insert_before(child3.clone(), Some(child2.clone())).unwrap();
+    parent
+        .write()
+        .insert_before(child3.clone(), Some(child2.clone()))
+        .unwrap();
 
     let children = parent.read().child_nodes();
     assert_eq!(children.len(), 3);
@@ -163,10 +166,10 @@ fn test_contains() {
     parent.write().append_child(child.clone()).unwrap();
 
     // Grandparent contains child
-    assert!(grandparent.read().contains(&*child.read()));
+    assert!(grandparent.read().contains(&**child.read()));
 
     // Child does not contain grandparent
-    assert!(!child.read().contains(&*grandparent.read()));
+    assert!(!child.read().contains(&**grandparent.read()));
 }
 
 #[test]

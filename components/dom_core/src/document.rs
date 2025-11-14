@@ -1,5 +1,6 @@
 //! Document node implementation
 
+use crate::attr::{Attr, AttrRef};
 use crate::comment::Comment;
 use crate::element::{Element, ElementRef};
 use crate::node::{Node, NodeData, NodeRef};
@@ -116,6 +117,157 @@ impl Document {
         let _fragment_data = NodeData::new(NodeType::DocumentFragment, "#document-fragment");
         let fragment = Element::new("fragment");
         Arc::new(RwLock::new(Box::new(fragment) as Box<dyn Node>))
+    }
+
+    /// Creates a new Attr node
+    ///
+    /// # Arguments
+    /// * `name` - The attribute name
+    ///
+    /// # Returns
+    /// * `Ok(AttrRef)` - The newly created attribute node
+    /// * `Err(DomException::InvalidCharacterError)` - If the name is invalid
+    ///
+    /// # Example
+    /// ```
+    /// let mut doc = Document::new();
+    /// let attr = doc.create_attribute("id").unwrap();
+    /// attr.write().set_value("main");
+    /// ```
+    pub fn create_attribute(
+        &mut self,
+        name: impl Into<String>,
+    ) -> Result<AttrRef, DomException> {
+        let name_str = name.into();
+
+        // Validate attribute name (use same validation as tag names)
+        if !is_valid_tag_name(&name_str) {
+            return Err(DomException::InvalidCharacterError);
+        }
+
+        // Create attribute with empty value initially
+        let attr = Attr::new(name_str, "");
+        Ok(Arc::new(RwLock::new(attr)))
+    }
+
+    /// Creates a new namespaced Attr node
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `qualified_name` - The qualified name (e.g., "prefix:localName")
+    ///
+    /// # Returns
+    /// * `Ok(AttrRef)` - The newly created namespaced attribute node
+    /// * `Err(DomException::InvalidCharacterError)` - If the qualified name is invalid
+    /// * `Err(DomException::NamespaceError)` - If the namespace/name combination is invalid
+    ///
+    /// # Example
+    /// ```
+    /// let mut doc = Document::new();
+    /// let attr = doc.create_attribute_ns(
+    ///     Some("http://www.w3.org/1999/xlink"),
+    ///     "xlink:href"
+    /// ).unwrap();
+    /// ```
+    pub fn create_attribute_ns(
+        &mut self,
+        namespace: Option<impl Into<String>>,
+        qualified_name: impl Into<String>,
+    ) -> Result<AttrRef, DomException> {
+        let qname = qualified_name.into();
+
+        // If no namespace, create a regular attribute
+        let Some(ns) = namespace else {
+            // No namespace - just validate as regular name
+            if !is_valid_tag_name(&qname) {
+                return Err(DomException::InvalidCharacterError);
+            }
+            let attr = Attr::new(qname, "");
+            return Ok(Arc::new(RwLock::new(attr)));
+        };
+
+        // Create namespaced attribute using Attr::new_ns
+        // This will validate the qualified name
+        let attr = Attr::new_ns(ns, qname, "")?;
+        Ok(Arc::new(RwLock::new(attr)))
+    }
+
+    /// Imports a node from another document
+    ///
+    /// Creates a copy of a node from another document. The new node has no parent
+    /// and belongs to this document.
+    ///
+    /// # Arguments
+    /// * `node` - The node to import
+    /// * `deep` - If true, recursively clone all descendants
+    ///
+    /// # Returns
+    /// * `Ok(NodeRef)` - The imported (cloned) node
+    /// * `Err(DomException::NotSupportedError)` - For DocumentType nodes
+    ///
+    /// # Example
+    /// ```
+    /// let mut doc1 = Document::new();
+    /// let mut doc2 = Document::new();
+    /// let elem = doc1.create_element("div").unwrap();
+    /// let imported = doc2.import_node(elem.into(), true).unwrap();
+    /// ```
+    pub fn import_node(
+        &mut self,
+        node: NodeRef,
+        deep: bool,
+    ) -> Result<NodeRef, DomException> {
+        let node_type = node.read().node_type();
+
+        // DocumentType nodes cannot be imported
+        if node_type == NodeType::DocumentType {
+            return Err(DomException::NotSupportedError);
+        }
+
+        // Use the Node's clone_node method to create a copy
+        let cloned = node.read().clone_node(deep);
+
+        Ok(cloned)
+    }
+
+    /// Adopts a node from another document
+    ///
+    /// Removes the node from its current document (and parent) and changes its
+    /// owner document to this document. This is the same node, not a copy.
+    ///
+    /// # Arguments
+    /// * `node` - The node to adopt
+    ///
+    /// # Returns
+    /// * `Ok(NodeRef)` - The adopted node (same instance)
+    /// * `Err(DomException::NotSupportedError)` - For Document or DocumentType nodes
+    ///
+    /// # Example
+    /// ```
+    /// let mut doc1 = Document::new();
+    /// let mut doc2 = Document::new();
+    /// let elem = doc1.create_element("div").unwrap();
+    /// let adopted = doc2.adopt_node(elem.into()).unwrap();
+    /// ```
+    pub fn adopt_node(&mut self, node: NodeRef) -> Result<NodeRef, DomException> {
+        let node_type = node.read().node_type();
+
+        // Document and DocumentType nodes cannot be adopted
+        if node_type == NodeType::Document || node_type == NodeType::DocumentType {
+            return Err(DomException::NotSupportedError);
+        }
+
+        // Remove from old parent if it has one
+        if let Some(old_parent) = node.read().parent_node() {
+            old_parent.write().remove_child(node.clone())?;
+        }
+
+        // In a full implementation, we would:
+        // 1. Change the owner_document field of the node
+        // 2. Recursively change owner_document for all descendants
+        // For now, the node is simply returned (same instance)
+
+        Ok(node)
     }
 
     /// Gets an element by its ID
