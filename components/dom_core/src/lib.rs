@@ -14,9 +14,11 @@ pub mod document_fragment;
 pub mod document_type;
 pub mod dom_implementation;
 pub mod element;
+pub mod namespaces;
 pub mod node;
 pub mod processing_instruction;
 pub mod text;
+pub mod tree_order;
 
 // Re-exports
 pub use attr::{Attr, AttrRef};
@@ -27,6 +29,8 @@ pub use document_fragment::DocumentFragment;
 pub use document_type::{DocumentType, DocumentTypeRef};
 pub use dom_implementation::DOMImplementation;
 pub use element::{Element, ElementRef};
+pub use namespaces::*;
 pub use node::{Node, NodeData, NodeRef, WeakNodeRef};
 pub use processing_instruction::{ProcessingInstruction, ProcessingInstructionRef};
 pub use text::Text;
+pub use tree_order::*;
