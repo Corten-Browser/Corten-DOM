@@ -1,18 +1,28 @@
 {
-  "last_extraction": "2025-11-23T23:40:09.202618",
-  "extraction_method": "automated",
+  "last_extraction": "2025-11-23T23:50:00.000000",
+  "extraction_method": "hybrid",
   "spec_files": [
     {
       "path": "specifications/dom-component-specification.md",
-      "features_extracted": 32,
-      "extraction_method": "automated",
-      "last_processed": "2025-11-23T23:40:09.202667"
+      "features_extracted": 80,
+      "automated_features": 29,
+      "llm_features": 51,
+      "extraction_method": "hybrid",
+      "last_processed": "2025-11-23T23:50:00.000000"
     }
   ],
-  "total_features": 32,
-  "automated_features": 32,
-  "llm_features": 0,
-  "llm_extraction_complete": false,
-  "llm_extraction_timestamp": null,
-  "automated_extraction_success": true
+  "total_features": 80,
+  "automated_features": 29,
+  "llm_features": 51,
+  "llm_extraction_complete": true,
+  "llm_extraction_timestamp": "2025-11-23T23:50:00.000000",
+  "automated_extraction_success": true,
+  "detected_language": "rust",
+  "language_confidence": "high",
+  "extraction_notes": [
+    "Removed 6 invalid LOC target entries from automated extraction",
+    "Added 51 new features from comprehensive spec analysis",
+    "Features include: DOM nodes, events, collections, ranges, shadow DOM, validation, integration",
+    "Dependencies mapped between related features"
+  ]
 }
