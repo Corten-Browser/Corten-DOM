@@ -64,6 +64,7 @@ pub use dom_advanced::*;
 pub mod component;
 pub mod config;
 pub mod messages;
+pub mod validation;
 
 // Re-exports for convenience
 pub use component::DomComponent;
