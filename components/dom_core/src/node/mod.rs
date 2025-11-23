@@ -1,6 +1,8 @@
 //! Core Node trait and base implementation
 
-use crate::tree_order::{compare_document_position, DocumentPosition};
+use crate::tree_order::compare_document_position;
+// Re-export DocumentPosition for use by callers
+pub use crate::tree_order::DocumentPosition;
 use dom_types::{DomException, NodeType};
 use parking_lot::RwLock;
 use std::fmt;

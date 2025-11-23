@@ -336,6 +336,63 @@ impl Document {
         result
     }
 
+    /// Creates a new Event of the specified type
+    ///
+    /// This is the legacy DOM Level 2 createEvent() method. The returned event
+    /// must be initialized using initEvent() before being dispatched.
+    ///
+    /// # Arguments
+    /// * `event_interface` - The event interface name (e.g., "Event", "UIEvents", "MouseEvents")
+    ///
+    /// # Returns
+    /// * `Ok(Event)` - A new event of the specified type
+    /// * `Err(DomException::NotSupportedError)` - If the interface is not recognized
+    ///
+    /// # Supported Interfaces
+    /// - "Event", "Events", "HTMLEvents" - Basic Event
+    /// - "UIEvent", "UIEvents" - UI Event
+    /// - "MouseEvent", "MouseEvents" - Mouse Event
+    /// - "KeyboardEvent" - Keyboard Event
+    /// - "FocusEvent" - Focus Event
+    /// - "CustomEvent" - Custom Event
+    ///
+    /// # Example
+    /// ```
+    /// use dom_core::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let mut event = doc.create_event("Events").unwrap();
+    /// event.init_event("click", true, true);
+    /// ```
+    pub fn create_event(&mut self, event_interface: &str) -> Result<Event, DomException> {
+        event::create_event(event_interface)
+    }
+
+    /// Creates a new Range object
+    ///
+    /// The returned Range has both its boundary points set to the beginning
+    /// of the Document (or a dummy node if no document element exists).
+    ///
+    /// # Returns
+    /// A new Range object with both boundary points at document start
+    ///
+    /// # Example
+    /// ```
+    /// use dom_core::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let range = doc.create_range();
+    /// assert!(range.collapsed());
+    /// ```
+    pub fn create_range(&self) -> Range {
+        // Get the document element or its first child as the initial container
+        let initial_node = self.document_element.as_ref().map(|elem| {
+            Arc::new(RwLock::new(Box::new(elem.read().clone()) as Box<dyn Node>))
+        });
+
+        Range::new(initial_node)
+    }
+
     /// Gets the document URL
     pub fn url(&self) -> &str {
         &self.url

@@ -187,7 +187,11 @@ impl HTMLCollection {
 
         // Process each child
         for child in children {
-            if child.read().node_type() == NodeType::Element {
+            // Check node type and release lock before downcast to avoid deadlock
+            // parking_lot::RwLock does not support recursive read locks from same thread
+            let is_element = child.read().node_type() == NodeType::Element;
+
+            if is_element {
                 // Downcast NodeRef to ElementRef using as_any()
                 if let Some(child_element) = self.downcast_to_element(&child) {
                     // Recursively collect from this element and its children
