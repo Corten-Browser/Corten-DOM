@@ -33,7 +33,8 @@
 //!
 //! ```rust
 //! use browser_dom_impl::integration::HtmlParserIntegration;
-//! use browser_dom_impl::{DomException, NodeId, ParsedNode, ParsedNodeType};
+//! use browser_dom_impl::{DomException, ParsedNode, ParsedNodeType};
+//! use dom_types::NodeId;
 //! use std::collections::HashMap;
 //!
 //! struct MyDomBuilder {
