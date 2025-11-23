@@ -7,7 +7,10 @@ use parking_lot::RwLock;
 use std::sync::{Arc, Weak};
 
 fn create_element_node(tag: &str) -> NodeRef {
-    Arc::new(RwLock::new(Box::new(Element::new(tag)) as Box<dyn Node>))
+    let node_ref: NodeRef = Arc::new(RwLock::new(Box::new(Element::new(tag)) as Box<dyn Node>));
+    // Set self_node_ref so that append_child can set correct parent references
+    node_ref.write().node_data_mut().set_self_node_ref(Arc::downgrade(&node_ref));
+    node_ref
 }
 
 #[test]

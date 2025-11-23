@@ -166,6 +166,10 @@ pub struct NodeData {
 
     /// Child nodes
     pub children: Vec<NodeRef>,
+
+    /// Self-reference to the NodeRef that wraps this node (set after construction)
+    /// This is needed so that append_child can set the correct parent reference
+    pub self_node_ref: Option<WeakNodeRef>,
 }
 
 impl NodeData {
@@ -176,7 +180,19 @@ impl NodeData {
             node_name: node_name.into(),
             parent: None,
             children: Vec::new(),
+            self_node_ref: None,
         }
+    }
+
+    /// Sets the self-reference to the NodeRef that wraps this node
+    /// This MUST be called after wrapping the node in Arc<RwLock<Box<dyn Node>>>
+    pub fn set_self_node_ref(&mut self, self_ref: WeakNodeRef) {
+        self.self_node_ref = Some(self_ref);
+    }
+
+    /// Gets the NodeRef that wraps this node (if set)
+    pub fn get_self_node_ref(&self) -> Option<NodeRef> {
+        self.self_node_ref.as_ref().and_then(|weak| weak.upgrade())
     }
 
     /// Sets the parent node

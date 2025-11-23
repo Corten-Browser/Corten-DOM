@@ -527,33 +527,49 @@ impl Node for Element {
     }
 
     fn append_child(&mut self, child: NodeRef) -> Result<NodeRef, DomException> {
-        // 1. Check for circular reference by checking if child contains any of our ancestors
-        // We simplify by not allowing the node to append itself or its descendants
+        // 1. Check for circular reference - can't append ourselves
         {
             let child_node = child.read();
             let self_ptr = self as *const _ as *const dyn Node;
             let child_ptr = &**child_node as *const dyn Node;
 
-            if self_ptr == child_ptr {
+            if std::ptr::addr_eq(self_ptr, child_ptr) {
                 return Err(DomException::HierarchyRequestError);
             }
         }
 
-        // 2. Remove from old parent if exists
+        // 2. Check if child is one of our ancestors (would create cycle)
+        // We walk UP through our parent chain instead of DOWN through child's descendants
+        // to avoid deadlock (we may hold locks on nodes that are descendants of child)
+        {
+            let child_ptr = &**child.read() as *const dyn Node;
+            let mut current = self.node_data.get_parent();
+            while let Some(ancestor) = current {
+                let ancestor_guard = ancestor.read();
+                let ancestor_ptr = &**ancestor_guard as *const dyn Node;
+                if std::ptr::addr_eq(ancestor_ptr, child_ptr) {
+                    return Err(DomException::HierarchyRequestError);
+                }
+                current = ancestor_guard.parent_node();
+            }
+        }
+
+        // 3. Remove from old parent if exists
         let old_parent = child.read().parent_node();
         if let Some(parent) = old_parent {
             parent.write().remove_child(child.clone())?;
         }
 
-        // 3. Add to children
+        // 4. Add to children
         self.node_data.add_child(child.clone());
 
-        // 4. Set parent (create weak reference)
-        let self_ref = self.as_node_ref();
-        child
-            .write()
-            .node_data_mut()
-            .set_parent(Some(Arc::downgrade(&self_ref)));
+        // 5. Set parent using self_node_ref (the actual NodeRef that wraps us)
+        if let Some(self_ref) = self.node_data.get_self_node_ref() {
+            child
+                .write()
+                .node_data_mut()
+                .set_parent(Some(Arc::downgrade(&self_ref)));
+        }
 
         Ok(child)
     }
@@ -573,33 +589,48 @@ impl Node for Element {
         new_child: NodeRef,
         ref_child: Option<NodeRef>,
     ) -> Result<NodeRef, DomException> {
-        // 1. Check for circular reference (simple check)
+        // 1. Check for circular reference - can't insert ourselves
         {
             let child_node = new_child.read();
             let self_ptr = self as *const _ as *const dyn Node;
             let child_ptr = &**child_node as *const dyn Node;
 
-            if self_ptr == child_ptr {
+            if std::ptr::addr_eq(self_ptr, child_ptr) {
                 return Err(DomException::HierarchyRequestError);
             }
         }
 
-        // 2. Remove from old parent if exists
+        // 2. Check if child is one of our ancestors (would create cycle)
+        {
+            let child_ptr = &**new_child.read() as *const dyn Node;
+            let mut current = self.node_data.get_parent();
+            while let Some(ancestor) = current {
+                let ancestor_guard = ancestor.read();
+                let ancestor_ptr = &**ancestor_guard as *const dyn Node;
+                if std::ptr::addr_eq(ancestor_ptr, child_ptr) {
+                    return Err(DomException::HierarchyRequestError);
+                }
+                current = ancestor_guard.parent_node();
+            }
+        }
+
+        // 3. Remove from old parent if exists
         let old_parent = new_child.read().parent_node();
         if let Some(parent) = old_parent {
             parent.write().remove_child(new_child.clone())?;
         }
 
-        // 3. Insert before reference child
+        // 4. Insert before reference child
         self.node_data
             .insert_child_before(new_child.clone(), ref_child.as_ref())?;
 
-        // 4. Set parent
-        let self_ref = self.as_node_ref();
-        new_child
-            .write()
-            .node_data_mut()
-            .set_parent(Some(Arc::downgrade(&self_ref)));
+        // 5. Set parent using self_node_ref (the actual NodeRef that wraps us)
+        if let Some(self_ref) = self.node_data.get_self_node_ref() {
+            new_child
+                .write()
+                .node_data_mut()
+                .set_parent(Some(Arc::downgrade(&self_ref)));
+        }
 
         Ok(new_child)
     }
@@ -636,7 +667,8 @@ impl Node for Element {
         let self_ptr = self as *const _ as *const dyn Node;
         let other_ptr = other as *const dyn Node;
 
-        if self_ptr == other_ptr {
+        // Use addr_eq to compare only the data addresses, not vtable pointers
+        if std::ptr::addr_eq(self_ptr, other_ptr) {
             return true;
         }
 
