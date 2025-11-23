@@ -205,18 +205,23 @@ impl NodeIterator {
     /// }
     /// ```
     pub fn previous_node(&mut self) -> Option<NodeRef> {
-        if self.pointer_before_reference_node {
-            // Already at the beginning
-            return None;
-        }
-
-        let mut node = self.previous_in_tree_order(&self.reference_node)?;
+        // Symmetric to next_node():
+        // - When pointer_before_reference_node is false: check reference_node first
+        // - When pointer_before_reference_node is true: get the previous node
+        let mut node = if !self.pointer_before_reference_node {
+            // Pointer is after reference_node - check reference_node first
+            self.reference_node.clone()
+        } else {
+            // Pointer is before reference_node - get previous node in tree order
+            self.previous_in_tree_order(&self.reference_node)?
+        };
 
         loop {
             // Check filter
             match self.accept_node(&node) {
                 FilterResult::Accept => {
                     self.reference_node = node.clone();
+                    self.pointer_before_reference_node = true;
                     return Some(node);
                 }
                 FilterResult::Reject => {
@@ -287,99 +292,55 @@ impl NodeIterator {
     }
 
     /// Returns the next node in tree order (depth-first pre-order)
-    fn next_in_tree_order(&self, node: &NodeRef) -> Option<NodeRef> {
-        // First check children
-        let children = node.read().child_nodes();
-        if !children.is_empty() {
-            return Some(children[0].clone());
+    ///
+    /// This implementation traverses from root to find the target node,
+    /// then returns the next node in pre-order sequence. This is more robust
+    /// than relying on parent_node() which may not be set correctly in all cases.
+    fn next_in_tree_order(&self, target: &NodeRef) -> Option<NodeRef> {
+        // Collect all nodes in pre-order from root
+        let mut nodes = Vec::new();
+        self.collect_preorder(&self.root, &mut nodes);
+
+        // Find target and return the next node
+        for (i, node) in nodes.iter().enumerate() {
+            if self.is_same_node(node, target) {
+                return nodes.get(i + 1).cloned();
+            }
         }
+        None
+    }
 
-        // No children, need to find next sibling or ancestor's sibling
-        // Since nodes don't track siblings, we need to go through parent
-        let mut current = node.clone();
-
-        loop {
-            // Get parent
-            let parent = {
-                let parent_opt = current.read().parent_node();
-                match parent_opt {
-                    Some(p) => p,
-                    None => return None, // Reached top of tree
-                }
-            };
-
-            // Check if we're at root - if so, we're done
-            if self.is_same_node(&self.root, &current) {
-                return None;
-            }
-
-            // Find current node in parent's children and get next sibling
-            let siblings = parent.read().child_nodes();
-            let current_ptr = {
-                let guard = current.read();
-                &**guard as *const dyn dom_core::Node
-            };
-
-            for (i, sibling) in siblings.iter().enumerate() {
-                let sibling_ptr = {
-                    let guard = sibling.read();
-                    &**guard as *const dyn dom_core::Node
-                };
-                if sibling_ptr == current_ptr {
-                    // Found current node, check if there's a next sibling
-                    if i + 1 < siblings.len() {
-                        return Some(siblings[i + 1].clone());
-                    }
-                    // No next sibling, continue up the tree
-                    break;
-                }
-            }
-
-            // Move up to parent and continue looking
-            current = parent;
+    /// Collects all nodes in pre-order (depth-first) starting from the given node
+    fn collect_preorder(&self, node: &NodeRef, result: &mut Vec<NodeRef>) {
+        result.push(node.clone());
+        for child in node.read().child_nodes() {
+            self.collect_preorder(&child, result);
         }
     }
 
     /// Returns the previous node in reverse tree order
-    fn previous_in_tree_order(&self, node: &NodeRef) -> Option<NodeRef> {
-        // Check if this is the root
-        if self.is_same_node(&self.root, node) {
+    ///
+    /// This implementation traverses from root to find the target node,
+    /// then returns the previous node in pre-order sequence.
+    fn previous_in_tree_order(&self, target: &NodeRef) -> Option<NodeRef> {
+        // Check if this is the root - no previous node
+        if self.is_same_node(&self.root, target) {
             return None;
         }
 
-        // Get parent
-        let parent = {
-            match node.read().parent_node() {
-                Some(p) => p,
-                None => return None,
-            }
-        };
+        // Collect all nodes in pre-order from root
+        let mut nodes = Vec::new();
+        self.collect_preorder(&self.root, &mut nodes);
 
-        // Find previous sibling through parent's children
-        let siblings = parent.read().child_nodes();
-        let node_ptr = {
-            let guard = node.read();
-            &**guard as *const dyn dom_core::Node
-        };
-
-        for (i, sibling) in siblings.iter().enumerate() {
-            let sibling_ptr = {
-                let guard = sibling.read();
-                &**guard as *const dyn dom_core::Node
-            };
-            if sibling_ptr == node_ptr {
-                // Found current node
+        // Find target and return the previous node
+        for (i, node) in nodes.iter().enumerate() {
+            if self.is_same_node(node, target) {
                 if i > 0 {
-                    // Has previous sibling - return its last descendant
-                    return Some(self.last_descendant(&siblings[i - 1]));
-                } else {
-                    // No previous sibling, return parent
-                    return Some(parent);
+                    return Some(nodes[i - 1].clone());
                 }
+                return None;
             }
         }
-
-        // Couldn't find node in parent's children (shouldn't happen)
         None
     }
 
@@ -396,91 +357,23 @@ impl NodeIterator {
     }
 
     /// Skips a node and its entire subtree, returning the next node after the subtree
+    ///
+    /// This is used when a filter returns Reject - we skip the node and ALL descendants.
     fn skip_subtree(&self, node: &NodeRef) -> Option<NodeRef> {
-        let mut current = node.clone();
+        // Get the last descendant of this node (the deepest rightmost node)
+        let last = self.last_descendant(node);
 
-        loop {
-            // Get parent
-            let parent = {
-                match current.read().parent_node() {
-                    Some(p) => p,
-                    None => return None,
-                }
-            };
-
-            // Check if we're at root
-            if self.is_same_node(&self.root, &current) {
-                return None;
-            }
-
-            // Find next sibling through parent's children
-            let siblings = parent.read().child_nodes();
-            let current_ptr = {
-                let guard = current.read();
-                &**guard as *const dyn dom_core::Node
-            };
-
-            for (i, sibling) in siblings.iter().enumerate() {
-                let sibling_ptr = {
-                    let guard = sibling.read();
-                    &**guard as *const dyn dom_core::Node
-                };
-                if sibling_ptr == current_ptr {
-                    // Found current node
-                    if i + 1 < siblings.len() {
-                        return Some(siblings[i + 1].clone());
-                    }
-                    // No next sibling, continue up the tree
-                    break;
-                }
-            }
-
-            // Move up to parent
-            current = parent;
-        }
+        // Return the next node in pre-order after the last descendant
+        self.next_in_tree_order(&last)
     }
 
     /// Skips a node and its subtree in backward direction
+    ///
+    /// For backward traversal with Reject filter.
     fn skip_subtree_backwards(&self, node: &NodeRef) -> Option<NodeRef> {
-        // Check if this is the root
-        if self.is_same_node(&self.root, node) {
-            return None;
-        }
-
-        // Get parent
-        let parent = {
-            match node.read().parent_node() {
-                Some(p) => p,
-                None => return None,
-            }
-        };
-
-        // Find previous sibling through parent's children
-        let siblings = parent.read().child_nodes();
-        let node_ptr = {
-            let guard = node.read();
-            &**guard as *const dyn dom_core::Node
-        };
-
-        for (i, sibling) in siblings.iter().enumerate() {
-            let sibling_ptr = {
-                let guard = sibling.read();
-                &**guard as *const dyn dom_core::Node
-            };
-            if sibling_ptr == node_ptr {
-                // Found current node
-                if i > 0 {
-                    // Has previous sibling - return its last descendant
-                    return Some(self.last_descendant(&siblings[i - 1]));
-                } else {
-                    // No previous sibling, return parent
-                    return Some(parent);
-                }
-            }
-        }
-
-        // Couldn't find node in parent's children
-        None
+        // When going backwards and rejecting a node, we want to skip to
+        // the node before this one in pre-order (not its descendants)
+        self.previous_in_tree_order(node)
     }
 
     /// Checks if a node is within the root subtree
