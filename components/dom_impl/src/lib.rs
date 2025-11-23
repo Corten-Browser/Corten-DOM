@@ -186,6 +186,7 @@ pub mod config;
 pub mod integration;
 pub mod message_handler;
 pub mod messages;
+pub mod sanitization;
 pub mod validation;
 
 // Re-exports for convenience
@@ -213,3 +214,9 @@ pub mod predefined_atoms {
 
 // Message handler for direct DOM operations
 pub use message_handler::{DirectDomMessage, DirectDomResponse, DomErrorCode, DomMessageHandler};
+
+// Sanitization for XSS prevention
+pub use sanitization::{
+    dangerous_tags, escape_html, event_handlers, is_dangerous_url, might_contain_html,
+    sanitize_html, sanitize_html_with_stats, SanitizationPolicy, SanitizationResult,
+};
