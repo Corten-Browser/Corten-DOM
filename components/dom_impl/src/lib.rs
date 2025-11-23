@@ -61,9 +61,11 @@ pub use dom_types::*;
 #[cfg(feature = "dom-advanced")]
 pub use dom_advanced::*;
 
+pub mod atoms;
 pub mod component;
 pub mod config;
 pub mod integration;
+pub mod message_handler;
 pub mod messages;
 pub mod validation;
 
@@ -82,3 +84,13 @@ pub use integration::{
     JsBindingRegistry, JsBindings, JsMethodBinding, JsPropertyBinding, JsValue, StyleNode,
     TestAssertion, TestHarness, TestResult,
 };
+
+// Atom string interning
+pub use atoms::{all_atoms, atom_count, Atom};
+/// Re-export predefined atoms module
+pub mod predefined_atoms {
+    pub use super::atoms::atoms::*;
+}
+
+// Message handler for direct DOM operations
+pub use message_handler::{DirectDomMessage, DirectDomResponse, DomErrorCode, DomMessageHandler};
