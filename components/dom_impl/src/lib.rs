@@ -63,6 +63,7 @@ pub use dom_advanced::*;
 
 pub mod component;
 pub mod config;
+pub mod integration;
 pub mod messages;
 pub mod validation;
 
@@ -73,4 +74,11 @@ pub use messages::{
     DomComponentMessage, DomComponentResponse, DomOperation, EventData, InvalidationReason,
     LayoutInvalidationType, MutationRecord, MutationType, OperationParams, ParsedNode,
     ParsedNodeType, QueryResultType, QueryType, TreeChangeType,
+};
+
+// Integration traits and types
+pub use integration::{
+    ComputedStyleMap, CssEngineIntegration, DomTestHarness, HtmlParserIntegration,
+    JsBindingRegistry, JsBindings, JsMethodBinding, JsPropertyBinding, JsValue, StyleNode,
+    TestAssertion, TestHarness, TestResult,
 };
