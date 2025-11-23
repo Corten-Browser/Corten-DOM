@@ -3,7 +3,9 @@
 use crate::attr::{Attr, AttrRef};
 use crate::comment::Comment;
 use crate::element::{Element, ElementRef};
+use crate::event::{self, Event};
 use crate::node::{Node, NodeData, NodeRef};
+use crate::range::Range;
 use crate::text::Text;
 use dom_types::{DomException, NodeType};
 use indexmap::IndexMap;
@@ -305,6 +307,35 @@ impl Document {
         result
     }
 
+    /// Gets elements by the `name` attribute
+    ///
+    /// Returns a collection of elements that have a `name` attribute matching
+    /// the specified value. This method searches the entire document tree.
+    ///
+    /// # Arguments
+    /// * `name` - The name attribute value to search for
+    ///
+    /// # Returns
+    /// A vector of ElementRef matching the name attribute
+    ///
+    /// # Example
+    /// ```
+    /// let mut doc = Document::new();
+    /// let elem = doc.create_element("input").unwrap();
+    /// elem.write().set_attribute("name", "username").unwrap();
+    /// doc.set_document_element(elem);
+    /// let elements = doc.get_elements_by_name("username");
+    /// ```
+    pub fn get_elements_by_name(&self, name: &str) -> Vec<ElementRef> {
+        let mut result = Vec::new();
+
+        if let Some(root) = &self.document_element {
+            self.collect_elements_by_name(root, name, &mut result);
+        }
+
+        result
+    }
+
     /// Gets the document URL
     pub fn url(&self) -> &str {
         &self.url
@@ -373,6 +404,50 @@ impl Document {
             if child.read().node_type() == NodeType::Element {
                 // Recursively search children
             }
+        }
+    }
+
+    /// Collects elements by name attribute recursively
+    fn collect_elements_by_name(
+        &self,
+        element: &ElementRef,
+        name: &str,
+        result: &mut Vec<ElementRef>,
+    ) {
+        let elem = element.read();
+
+        // Check if element has matching name attribute
+        if let Some(attr_name) = elem.get_attribute("name") {
+            if attr_name == name {
+                result.push(element.clone());
+            }
+        }
+
+        // Search children recursively
+        for child in elem.child_nodes() {
+            if child.read().node_type() == NodeType::Element {
+                // We need to convert NodeRef to ElementRef for recursion
+                // This is a simplified implementation - in production, we'd need
+                // proper type conversion
+                if let Some(child_elem) = self.node_to_element(&child) {
+                    self.collect_elements_by_name(&child_elem, name, result);
+                }
+            }
+        }
+    }
+
+    /// Helper to convert NodeRef to ElementRef if the node is an element
+    fn node_to_element(&self, node: &NodeRef) -> Option<ElementRef> {
+        let node_guard = node.read();
+        if node_guard.node_type() != NodeType::Element {
+            return None;
+        }
+
+        // Use downcast to get the Element
+        if let Some(elem) = node_guard.as_any().downcast_ref::<Element>() {
+            Some(Arc::new(RwLock::new(elem.clone())))
+        } else {
+            None
         }
     }
 }

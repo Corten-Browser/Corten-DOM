@@ -7,6 +7,13 @@ use indexmap::IndexMap;
 use parking_lot::RwLock;
 use std::sync::{Arc, Weak};
 
+/// Key for namespaced attributes
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+struct NamespacedAttrKey {
+    namespace: Option<String>,
+    local_name: String,
+}
+
 /// Element node implementation
 #[derive(Debug)]
 pub struct Element {
@@ -21,6 +28,9 @@ pub struct Element {
 
     /// Element attributes (preserves insertion order)
     attributes: IndexMap<String, String>,
+
+    /// Namespaced attributes (namespace + localName -> qualified_name + value)
+    namespaced_attributes: IndexMap<NamespacedAttrKey, (String, String)>,
 
     /// CSS class list (space-separated class names)
     class_list: Vec<String>,
@@ -44,6 +54,7 @@ impl Element {
             tag_name: tag,
             namespace: None,
             attributes: IndexMap::new(),
+            namespaced_attributes: IndexMap::new(),
             class_list: Vec::new(),
             id: None,
             self_ref: None,
@@ -58,6 +69,7 @@ impl Element {
             tag_name: tag,
             namespace: Some(namespace.into()),
             attributes: IndexMap::new(),
+            namespaced_attributes: IndexMap::new(),
             class_list: Vec::new(),
             id: None,
             self_ref: None,
@@ -196,6 +208,231 @@ impl Element {
 
         // Set the attribute using the existing set_attribute method
         self.set_attribute(&attr_name, &attr_value)?;
+
+        // Set the owner element on the new attr
+        if let Some(ref self_weak) = self.self_ref {
+            attr.write().set_owner_element(Some(self_weak.clone()));
+        }
+
+        Ok(old_attr)
+    }
+
+    // ==================== Namespaced Attribute Operations ====================
+
+    /// Gets a namespaced attribute value
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `local_name` - The local name of the attribute
+    ///
+    /// # Returns
+    /// The attribute value if found, None otherwise
+    pub fn get_attribute_ns(&self, namespace: Option<&str>, local_name: &str) -> Option<String> {
+        let key = NamespacedAttrKey {
+            namespace: namespace.map(|s| s.to_string()),
+            local_name: local_name.to_string(),
+        };
+
+        self.namespaced_attributes.get(&key).map(|(_, value)| value.clone())
+    }
+
+    /// Sets a namespaced attribute
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `qualified_name` - The qualified name (may include prefix like "prefix:localName")
+    /// * `value` - The attribute value
+    ///
+    /// # Errors
+    /// Returns `DomException::InvalidCharacterError` if the qualified name is invalid
+    /// Returns `DomException::NamespaceError` if there's a namespace/prefix mismatch
+    pub fn set_attribute_ns(
+        &mut self,
+        namespace: Option<&str>,
+        qualified_name: &str,
+        value: &str,
+    ) -> Result<(), DomException> {
+        // Validate qualified name
+        if !is_valid_qualified_name(qualified_name) {
+            return Err(DomException::InvalidCharacterError);
+        }
+
+        // Parse qualified name
+        let (prefix, local_name) = parse_qualified_name(qualified_name);
+
+        // Namespace validation
+        // If prefix is Some, namespace must be Some
+        if prefix.is_some() && namespace.is_none() {
+            return Err(DomException::NamespaceError);
+        }
+
+        // "xml" prefix must be used with XML namespace
+        if prefix.as_deref() == Some("xml")
+            && namespace != Some("http://www.w3.org/XML/1998/namespace")
+        {
+            return Err(DomException::NamespaceError);
+        }
+
+        // "xmlns" prefix must be used with XMLNS namespace
+        if prefix.as_deref() == Some("xmlns")
+            && namespace != Some("http://www.w3.org/2000/xmlns/")
+        {
+            return Err(DomException::NamespaceError);
+        }
+
+        // "xmlns" local name without prefix requires XMLNS namespace
+        if local_name == "xmlns" && prefix.is_none()
+            && namespace != Some("http://www.w3.org/2000/xmlns/")
+        {
+            return Err(DomException::NamespaceError);
+        }
+
+        let key = NamespacedAttrKey {
+            namespace: namespace.map(|s| s.to_string()),
+            local_name: local_name.to_string(),
+        };
+
+        self.namespaced_attributes
+            .insert(key, (qualified_name.to_string(), value.to_string()));
+
+        // Also store in regular attributes for compatibility
+        self.attributes
+            .insert(qualified_name.to_string(), value.to_string());
+
+        Ok(())
+    }
+
+    /// Removes a namespaced attribute
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `local_name` - The local name of the attribute
+    pub fn remove_attribute_ns(
+        &mut self,
+        namespace: Option<&str>,
+        local_name: &str,
+    ) -> Result<(), DomException> {
+        let key = NamespacedAttrKey {
+            namespace: namespace.map(|s| s.to_string()),
+            local_name: local_name.to_string(),
+        };
+
+        // Get the qualified name before removing
+        if let Some((qualified_name, _)) = self.namespaced_attributes.shift_remove(&key) {
+            // Also remove from regular attributes
+            self.attributes.shift_remove(&qualified_name);
+        }
+
+        Ok(())
+    }
+
+    /// Checks if a namespaced attribute exists
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `local_name` - The local name of the attribute
+    pub fn has_attribute_ns(&self, namespace: Option<&str>, local_name: &str) -> bool {
+        let key = NamespacedAttrKey {
+            namespace: namespace.map(|s| s.to_string()),
+            local_name: local_name.to_string(),
+        };
+
+        self.namespaced_attributes.contains_key(&key)
+    }
+
+    /// Gets a namespaced attribute node
+    ///
+    /// # Arguments
+    /// * `namespace` - The namespace URI (None for no namespace)
+    /// * `local_name` - The local name of the attribute
+    pub fn get_attribute_node_ns(
+        &self,
+        namespace: Option<&str>,
+        local_name: &str,
+    ) -> Option<AttrRef> {
+        let key = NamespacedAttrKey {
+            namespace: namespace.map(|s| s.to_string()),
+            local_name: local_name.to_string(),
+        };
+
+        let (qualified_name, value) = self.namespaced_attributes.get(&key)?;
+
+        // Create a namespaced Attr
+        let attr = if let Some(ns) = namespace {
+            Attr::new_ns(ns, qualified_name, value).ok()?
+        } else {
+            Attr::new(qualified_name, value)
+        };
+
+        let attr_ref = Arc::new(RwLock::new(attr));
+
+        // Set the owner element weak reference if we have self_ref
+        if let Some(ref self_weak) = self.self_ref {
+            attr_ref.write().set_owner_element(Some(self_weak.clone()));
+        }
+
+        Some(attr_ref)
+    }
+
+    /// Sets a namespaced attribute node
+    ///
+    /// # Arguments
+    /// * `attr` - The attribute node to set
+    ///
+    /// # Errors
+    /// Returns `DomException::InvalidStateError` if the attribute is already
+    /// owned by a different element
+    pub fn set_attribute_node_ns(
+        &mut self,
+        attr: AttrRef,
+    ) -> Result<Option<AttrRef>, DomException> {
+        let attr_guard = attr.read();
+        let namespace = attr_guard.namespace_uri().map(|s| s.to_string());
+        let local_name = attr_guard.local_name().to_string();
+        let qualified_name = attr_guard.name().to_string();
+        let value = attr_guard.value().to_string();
+
+        // Check if attr already has an owner element
+        if let Some(owner) = attr_guard.owner_element() {
+            if let Some(ref self_weak) = self.self_ref {
+                if let Some(self_arc) = self_weak.upgrade() {
+                    if !Arc::ptr_eq(&owner, &self_arc) {
+                        return Err(DomException::InvalidStateError);
+                    }
+                }
+            } else {
+                return Err(DomException::InvalidStateError);
+            }
+        }
+        drop(attr_guard);
+
+        let key = NamespacedAttrKey {
+            namespace: namespace.clone(),
+            local_name: local_name.clone(),
+        };
+
+        // Get old attribute if it exists
+        let old_attr = if let Some((old_qname, old_value)) = self.namespaced_attributes.get(&key) {
+            let old_attr_node = if let Some(ref ns) = namespace {
+                Attr::new_ns(ns, old_qname, old_value).ok()
+            } else {
+                Some(Attr::new(old_qname, old_value))
+            };
+
+            old_attr_node.map(|mut a| {
+                if let Some(ref self_weak) = self.self_ref {
+                    a.set_owner_element(Some(self_weak.clone()));
+                }
+                Arc::new(RwLock::new(a))
+            })
+        } else {
+            None
+        };
+
+        // Set the new attribute
+        self.namespaced_attributes
+            .insert(key, (qualified_name.clone(), value.clone()));
+        self.attributes.insert(qualified_name, value);
 
         // Set the owner element on the new attr
         if let Some(ref self_weak) = self.self_ref {
@@ -428,6 +665,7 @@ impl Clone for Element {
             tag_name: self.tag_name.clone(),
             namespace: self.namespace.clone(),
             attributes: self.attributes.clone(),
+            namespaced_attributes: self.namespaced_attributes.clone(),
             class_list: self.class_list.clone(),
             id: self.id.clone(),
             self_ref: None, // Don't clone self-reference
@@ -450,6 +688,44 @@ fn is_valid_attribute_name(name: &str) -> bool {
     // Subsequent characters can be letters, digits, hyphens, underscores
     name.chars()
         .all(|c| c.is_alphanumeric() || c == '-' || c == '_')
+}
+
+/// Validates a qualified name according to XML naming rules
+fn is_valid_qualified_name(name: &str) -> bool {
+    if name.is_empty() {
+        return false;
+    }
+
+    // Check for invalid patterns
+    if name.starts_with(':') || name.ends_with(':') {
+        return false;
+    }
+
+    // Count colons - should be 0 or 1
+    let colon_count = name.chars().filter(|&c| c == ':').count();
+    if colon_count > 1 {
+        return false;
+    }
+
+    // Check for whitespace
+    if name.contains(char::is_whitespace) {
+        return false;
+    }
+
+    true
+}
+
+/// Parses a qualified name into prefix and local name
+///
+/// Returns (prefix, local_name) tuple where prefix is None if no colon found
+fn parse_qualified_name(qualified_name: &str) -> (Option<String>, &str) {
+    if let Some(colon_pos) = qualified_name.find(':') {
+        let prefix = &qualified_name[..colon_pos];
+        let local_name = &qualified_name[colon_pos + 1..];
+        (Some(prefix.to_string()), local_name)
+    } else {
+        (None, qualified_name)
+    }
 }
 
 #[cfg(test)]
@@ -493,5 +769,223 @@ mod tests {
         let result = elem.set_attribute("123invalid", "value");
         assert!(result.is_err());
         assert_eq!(result.unwrap_err(), DomException::InvalidCharacterError);
+    }
+
+    // ==================== Namespaced Attribute Tests ====================
+
+    #[test]
+    fn test_set_attribute_ns_basic() {
+        let mut elem = Element::new("svg");
+
+        elem.set_attribute_ns(
+            Some("http://www.w3.org/1999/xlink"),
+            "xlink:href",
+            "#target",
+        )
+        .unwrap();
+
+        assert!(elem.has_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"));
+        assert_eq!(
+            elem.get_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"),
+            Some("#target".to_string())
+        );
+    }
+
+    #[test]
+    fn test_set_attribute_ns_no_namespace() {
+        let mut elem = Element::new("div");
+
+        elem.set_attribute_ns(None, "data-value", "123").unwrap();
+
+        assert!(elem.has_attribute_ns(None, "data-value"));
+        assert_eq!(
+            elem.get_attribute_ns(None, "data-value"),
+            Some("123".to_string())
+        );
+    }
+
+    #[test]
+    fn test_remove_attribute_ns() {
+        let mut elem = Element::new("svg");
+
+        elem.set_attribute_ns(
+            Some("http://www.w3.org/1999/xlink"),
+            "xlink:href",
+            "#target",
+        )
+        .unwrap();
+
+        assert!(elem.has_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"));
+
+        elem.remove_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href")
+            .unwrap();
+
+        assert!(!elem.has_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"));
+        assert_eq!(
+            elem.get_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"),
+            None
+        );
+    }
+
+    #[test]
+    fn test_set_attribute_ns_prefix_without_namespace_error() {
+        let mut elem = Element::new("div");
+
+        // Prefix requires namespace
+        let result = elem.set_attribute_ns(None, "foo:bar", "value");
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), DomException::NamespaceError);
+    }
+
+    #[test]
+    fn test_set_attribute_ns_xml_namespace() {
+        let mut elem = Element::new("div");
+
+        // xml prefix must use XML namespace
+        let result = elem.set_attribute_ns(
+            Some("http://wrong-namespace.com"),
+            "xml:lang",
+            "en",
+        );
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), DomException::NamespaceError);
+
+        // Correct XML namespace
+        let result = elem.set_attribute_ns(
+            Some("http://www.w3.org/XML/1998/namespace"),
+            "xml:lang",
+            "en",
+        );
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_set_attribute_ns_invalid_qualified_name() {
+        let mut elem = Element::new("div");
+
+        // Invalid: starts with colon
+        let result = elem.set_attribute_ns(Some("http://example.com"), ":invalid", "value");
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), DomException::InvalidCharacterError);
+
+        // Invalid: multiple colons
+        let result = elem.set_attribute_ns(Some("http://example.com"), "a:b:c", "value");
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err(), DomException::InvalidCharacterError);
+    }
+
+    #[test]
+    fn test_get_attribute_node_ns() {
+        let mut elem = Element::new("svg");
+
+        elem.set_attribute_ns(
+            Some("http://www.w3.org/1999/xlink"),
+            "xlink:href",
+            "#target",
+        )
+        .unwrap();
+
+        let attr = elem
+            .get_attribute_node_ns(Some("http://www.w3.org/1999/xlink"), "href")
+            .unwrap();
+
+        let attr_guard = attr.read();
+        assert_eq!(attr_guard.value(), "#target");
+        assert_eq!(
+            attr_guard.namespace_uri(),
+            Some("http://www.w3.org/1999/xlink")
+        );
+        assert_eq!(attr_guard.prefix(), Some("xlink"));
+        assert_eq!(attr_guard.local_name(), "href");
+    }
+
+    #[test]
+    fn test_get_attribute_node_ns_not_found() {
+        let elem = Element::new("div");
+
+        let result = elem.get_attribute_node_ns(Some("http://example.com"), "nonexistent");
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn test_set_attribute_node_ns() {
+        let mut elem = Element::new("svg");
+
+        let attr = Attr::new_ns(
+            "http://www.w3.org/1999/xlink",
+            "xlink:href",
+            "#new-target",
+        )
+        .unwrap();
+        let attr_ref = Arc::new(RwLock::new(attr));
+
+        let result = elem.set_attribute_node_ns(attr_ref);
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_none()); // No old attribute
+
+        assert_eq!(
+            elem.get_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"),
+            Some("#new-target".to_string())
+        );
+    }
+
+    #[test]
+    fn test_set_attribute_node_ns_replaces_existing() {
+        let mut elem = Element::new("svg");
+
+        // Set initial attribute
+        elem.set_attribute_ns(
+            Some("http://www.w3.org/1999/xlink"),
+            "xlink:href",
+            "#original",
+        )
+        .unwrap();
+
+        // Create new attribute to replace
+        let new_attr = Attr::new_ns(
+            "http://www.w3.org/1999/xlink",
+            "xlink:href",
+            "#replaced",
+        )
+        .unwrap();
+        let new_attr_ref = Arc::new(RwLock::new(new_attr));
+
+        let result = elem.set_attribute_node_ns(new_attr_ref);
+        assert!(result.is_ok());
+
+        let old_attr = result.unwrap();
+        assert!(old_attr.is_some());
+        assert_eq!(old_attr.unwrap().read().value(), "#original");
+
+        assert_eq!(
+            elem.get_attribute_ns(Some("http://www.w3.org/1999/xlink"), "href"),
+            Some("#replaced".to_string())
+        );
+    }
+
+    // ==================== Helper Function Tests ====================
+
+    #[test]
+    fn test_is_valid_qualified_name() {
+        assert!(is_valid_qualified_name("id"));
+        assert!(is_valid_qualified_name("xlink:href"));
+        assert!(is_valid_qualified_name("data-value"));
+
+        assert!(!is_valid_qualified_name(""));
+        assert!(!is_valid_qualified_name(":invalid"));
+        assert!(!is_valid_qualified_name("invalid:"));
+        assert!(!is_valid_qualified_name("a:b:c"));
+        assert!(!is_valid_qualified_name("invalid name"));
+    }
+
+    #[test]
+    fn test_parse_qualified_name() {
+        let (prefix, local) = parse_qualified_name("xlink:href");
+        assert_eq!(prefix, Some("xlink".to_string()));
+        assert_eq!(local, "href");
+
+        let (prefix, local) = parse_qualified_name("id");
+        assert_eq!(prefix, None);
+        assert_eq!(local, "id");
     }
 }

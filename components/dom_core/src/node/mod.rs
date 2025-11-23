@@ -1,5 +1,6 @@
 //! Core Node trait and base implementation
 
+use crate::tree_order::{compare_document_position, DocumentPosition};
 use dom_types::{DomException, NodeType};
 use parking_lot::RwLock;
 use std::fmt;
@@ -124,6 +125,20 @@ pub trait Node: Send + Sync + std::fmt::Debug {
 
     /// Checks if this node contains another node
     fn contains(&self, other: &dyn Node) -> bool; // Must be implemented by concrete types
+
+    /// Compares the document position of this node with another node
+    ///
+    /// Returns a bitmask of `DocumentPosition` flags indicating the relationship.
+    /// Common return values:
+    /// - 0: Nodes are the same
+    /// - PRECEDING (2): Other node precedes this node
+    /// - FOLLOWING (4): Other node follows this node
+    /// - CONTAINS (8): Other node contains this node
+    /// - CONTAINED_BY (16): Other node is contained by this node
+    /// - DISCONNECTED (1): Nodes are not in the same tree
+    fn compare_document_position(&self, other: &NodeRef, self_ref: &NodeRef) -> u16 {
+        compare_document_position(self_ref, other)
+    }
 
     /// Access to internal node data
     fn node_data(&self) -> &NodeData;
