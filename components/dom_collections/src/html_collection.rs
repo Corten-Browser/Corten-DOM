@@ -168,20 +168,16 @@ impl HTMLCollection {
         let mut items = Vec::new();
 
         if let Some(root) = self.root.upgrade() {
-            // Collect from root
-            self.collect_from_element_and_children(&root, &mut items);
+            // Collect from root's DESCENDANTS only (not root itself)
+            // This matches the DOM spec for getElementsBy* methods
+            self.collect_descendants(&root, &mut items);
         }
 
         *self.cached_items.borrow_mut() = items;
     }
 
-    /// Collects matching elements from an element and its descendants
-    fn collect_from_element_and_children(&self, element: &ElementRef, items: &mut Vec<ElementRef>) {
-        // Check if this element matches the filter
-        if (self.filter)(element) {
-            items.push(element.clone());
-        }
-
+    /// Collects matching elements from an element's descendants (not the element itself)
+    fn collect_descendants(&self, element: &ElementRef, items: &mut Vec<ElementRef>) {
         // Get children from the element's node data
         let children = element.read().child_nodes();
 
@@ -194,11 +190,28 @@ impl HTMLCollection {
             if is_element {
                 // Downcast NodeRef to ElementRef using as_any()
                 if let Some(child_element) = self.downcast_to_element(&child) {
-                    // Recursively collect from this element and its children
-                    self.collect_from_element_and_children(&child_element, items);
+                    // Check if this descendant matches the filter
+                    if (self.filter)(&child_element) {
+                        items.push(child_element.clone());
+                    }
+                    // Recursively collect from this element's descendants
+                    self.collect_descendants(&child_element, items);
                 }
             }
         }
+    }
+
+    /// Collects matching elements from an element and its descendants (includes the element)
+    /// This is kept for potential future use where we want to include the root
+    #[allow(dead_code)]
+    fn collect_from_element_and_children(&self, element: &ElementRef, items: &mut Vec<ElementRef>) {
+        // Check if this element matches the filter
+        if (self.filter)(element) {
+            items.push(element.clone());
+        }
+
+        // Then collect from descendants
+        self.collect_descendants(element, items);
     }
 
     /// Helper method to downcast a NodeRef to ElementRef

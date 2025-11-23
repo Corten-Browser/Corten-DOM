@@ -501,14 +501,10 @@ impl Element {
 
     /// Helper to get this element as a NodeRef
     fn as_node_ref(&self) -> NodeRef {
-        // If we have a self-reference, use it to create proper parent pointers
-        if let Some(self_weak) = &self.self_ref {
-            if let Some(self_arc) = self_weak.upgrade() {
-                // Convert ElementRef to NodeRef
-                return Arc::new(RwLock::new(Box::new(self_arc.read().clone()) as Box<dyn Node>));
-            }
-        }
-        // Fallback: create a new Arc (won't have correct parent pointers)
+        // IMPORTANT: Don't try to read through self_ref here, as this method
+        // may be called while holding a write lock on self (e.g., in append_child).
+        // parking_lot RwLock doesn't support recursive locking, so we must
+        // just clone self directly.
         Arc::new(RwLock::new(Box::new(self.clone()) as Box<dyn Node>))
     }
 }
