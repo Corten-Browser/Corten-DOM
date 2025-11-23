@@ -1,0 +1,18 @@
+{
+  "last_extraction": "2025-11-23T23:40:09.202618",
+  "extraction_method": "automated",
+  "spec_files": [
+    {
+      "path": "specifications/dom-component-specification.md",
+      "features_extracted": 32,
+      "extraction_method": "automated",
+      "last_processed": "2025-11-23T23:40:09.202667"
+    }
+  ],
+  "total_features": 32,
+  "automated_features": 32,
+  "llm_features": 0,
+  "llm_extraction_complete": false,
+  "llm_extraction_timestamp": null,
+  "automated_extraction_success": true
+}
