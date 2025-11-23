@@ -32,8 +32,8 @@
 //! ## HTML Parser Integration
 //!
 //! ```rust
-//! use browser_dom_impl::integration::{HtmlParserIntegration, ParsedNode, ParsedNodeType};
-//! use browser_dom_impl::{DomException, NodeId};
+//! use browser_dom_impl::integration::HtmlParserIntegration;
+//! use browser_dom_impl::{DomException, NodeId, ParsedNode, ParsedNodeType};
 //! use std::collections::HashMap;
 //!
 //! struct MyDomBuilder {

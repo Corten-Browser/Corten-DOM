@@ -75,13 +75,10 @@
 //! Use the `DocumentEventExt` trait for creating events:
 //!
 //! ```rust
-//! use dom_events::{create_mouse_event, MouseEventInit};
+//! use dom_events::create_mouse_event;
 //!
-//! let event = create_mouse_event("click", MouseEventInit {
-//!     screen_x: 100,
-//!     screen_y: 200,
-//!     ..Default::default()
-//! });
+//! // Create a mouse event with default init values
+//! let event = create_mouse_event("click");
 //! ```
 //!
 //! # Related Crates

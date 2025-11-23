@@ -46,8 +46,8 @@
 //! use dom_types::{DOMRect, DOMRectList};
 //!
 //! let rect = DOMRect::new(0.0, 0.0, 100.0, 50.0);
-//! assert_eq!(rect.width(), 100.0);
-//! assert_eq!(rect.height(), 50.0);
+//! assert_eq!(rect.width, 100.0);
+//! assert_eq!(rect.height, 50.0);
 //! ```
 //!
 //! # Modules
