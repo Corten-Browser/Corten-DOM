@@ -3,6 +3,7 @@
 //! These tests verify that all DOM components work together correctly.
 
 use browser_dom_impl::*;
+use dom_advanced::range::Range;
 use dom_core::Event as CoreEvent;
 use dom_core::EventInit as CoreEventInit;
 use dom_events::Event as DomEvent;
@@ -342,7 +343,8 @@ fn test_html_collection_by_class_name() {
 /// Test basic Range creation and properties
 #[test]
 fn test_range_creation() {
-    let range = Range::new(None);
+    let doc = Document::new();
+    let range = Range::new(&doc);
 
     // Range should be collapsed initially
     assert!(range.collapsed());
@@ -353,9 +355,10 @@ fn test_range_creation() {
 /// Test Range set_start and set_end
 #[test]
 fn test_range_boundary_points() {
+    let doc = Document::new();
     let text_node: NodeRef = Arc::new(RwLock::new(Box::new(Text::new("Hello World")) as Box<dyn Node>));
 
-    let mut range = Range::new(Some(text_node.clone()));
+    let mut range = Range::new(&doc);
 
     // Set start at position 0
     range.set_start(text_node.clone(), 0).unwrap();
@@ -371,9 +374,10 @@ fn test_range_boundary_points() {
 /// Test Range collapse
 #[test]
 fn test_range_collapse() {
+    let doc = Document::new();
     let text_node: NodeRef = Arc::new(RwLock::new(Box::new(Text::new("Hello World")) as Box<dyn Node>));
 
-    let mut range = Range::new(Some(text_node.clone()));
+    let mut range = Range::new(&doc);
     range.set_start(text_node.clone(), 0).unwrap();
     range.set_end(text_node.clone(), 5).unwrap();
 
