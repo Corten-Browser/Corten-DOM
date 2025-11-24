@@ -72,19 +72,15 @@
 //!
 //! # Node Filter
 //!
-//! Filter nodes during traversal:
+//! Filter nodes during traversal using closures:
 //!
-//! ```rust
-//! use dom_collections::{NodeFilter, FilterResult};
+//! ```rust,ignore
+//! use dom_collections::{FilterResult, node_iterator::NodeRef};
+//! use std::sync::Arc;
 //!
-//! // Custom filter implementation
-//! struct VisibleElementFilter;
-//!
-//! impl NodeFilter for VisibleElementFilter {
-//!     fn accept_node(&self, node: &dyn std::any::Any) -> FilterResult {
-//!         FilterResult::Accept
-//!     }
-//! }
+//! // Create a filter that accepts all element nodes
+//! let filter: Option<Arc<dyn Fn(&NodeRef) -> FilterResult + Send + Sync>> =
+//!     Some(Arc::new(|_node| FilterResult::Accept));
 //! ```
 //!
 //! # Show Flags

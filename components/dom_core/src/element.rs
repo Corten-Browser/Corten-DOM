@@ -526,6 +526,40 @@ impl Node for Element {
         self.node_data.children.clone()
     }
 
+    fn text_content(&self) -> Option<String> {
+        // For Element nodes, text_content returns the concatenation of all Text descendant text content
+        let mut result = String::new();
+        for child in &self.node_data.children {
+            let child_guard = child.read();
+            match child_guard.node_type() {
+                NodeType::Text | NodeType::CDataSection => {
+                    if let Some(text) = child_guard.text_content() {
+                        result.push_str(&text);
+                    }
+                }
+                NodeType::Element => {
+                    if let Some(text) = child_guard.text_content() {
+                        result.push_str(&text);
+                    }
+                }
+                _ => {}
+            }
+        }
+        Some(result)
+    }
+
+    fn set_text_content(&mut self, text: String) {
+        // Clear all children first
+        self.node_data.children.clear();
+
+        // If text is not empty, create a Text node child
+        if !text.is_empty() {
+            let text_node = crate::Text::new(&text);
+            let text_ref: NodeRef = Arc::new(RwLock::new(Box::new(text_node) as Box<dyn Node>));
+            self.node_data.add_child(text_ref);
+        }
+    }
+
     fn append_child(&mut self, child: NodeRef) -> Result<NodeRef, DomException> {
         // 1. Check for circular reference - can't append ourselves
         {
