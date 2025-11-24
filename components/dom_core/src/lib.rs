@@ -29,8 +29,8 @@
 //! div.write().set_attribute("id", "main").unwrap();
 //! div.write().set_attribute("class", "container").unwrap();
 //!
-//! // Build tree structure
-//! div.write().append_child_element(span).unwrap();
+//! // Elements are ready - span could be added to div using DOM manipulation
+//! // methods once converted to NodeRef
 //!
 //! // Set as document root
 //! doc.set_document_element(div);

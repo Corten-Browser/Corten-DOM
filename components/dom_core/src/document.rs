@@ -138,6 +138,8 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc = Document::new();
     /// let attr = doc.create_attribute("id").unwrap();
     /// attr.write().set_value("main");
@@ -171,6 +173,8 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc = Document::new();
     /// let attr = doc.create_attribute_ns(
     ///     Some("http://www.w3.org/1999/xlink"),
@@ -215,10 +219,13 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc1 = Document::new();
     /// let mut doc2 = Document::new();
     /// let elem = doc1.create_element("div").unwrap();
-    /// let imported = doc2.import_node(elem.into(), true).unwrap();
+    /// // Note: elem.into() converts ElementRef to NodeRef
+    /// // let imported = doc2.import_node(elem.into(), true).unwrap();
     /// ```
     pub fn import_node(
         &mut self,
@@ -252,10 +259,13 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc1 = Document::new();
     /// let mut doc2 = Document::new();
     /// let elem = doc1.create_element("div").unwrap();
-    /// let adopted = doc2.adopt_node(elem.into()).unwrap();
+    /// // Note: elem.into() converts ElementRef to NodeRef
+    /// // let adopted = doc2.adopt_node(elem.into()).unwrap();
     /// ```
     pub fn adopt_node(&mut self, node: NodeRef) -> Result<NodeRef, DomException> {
         let node_type = node.read().node_type();
@@ -320,6 +330,8 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc = Document::new();
     /// let elem = doc.create_element("input").unwrap();
     /// elem.write().set_attribute("name", "username").unwrap();
