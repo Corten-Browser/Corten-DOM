@@ -49,6 +49,115 @@ impl HTMLCollection {
         collection
     }
 
+    /// Creates an HTMLCollection that matches elements by tag name.
+    ///
+    /// This is used by `Element.getElementsByTagName()`.
+    ///
+    /// # Arguments
+    /// * `root` - The root element to search within (descendants only)
+    /// * `tag_name` - The tag name to match (case-insensitive for HTML, "*" matches all)
+    ///
+    /// # Examples
+    /// ```ignore
+    /// let collection = HTMLCollection::by_tag_name(root, "div".to_string());
+    /// ```
+    pub fn by_tag_name(root: ElementRef, tag_name: String) -> Self {
+        let target_tag = tag_name.to_uppercase();
+        let match_all = target_tag == "*";
+
+        HTMLCollection::new(root, move |el: &ElementRef| {
+            if match_all {
+                true
+            } else {
+                el.read().tag_name() == target_tag
+            }
+        })
+    }
+
+    /// Creates an HTMLCollection that matches elements by class name(s).
+    ///
+    /// This is used by `Element.getElementsByClassName()`.
+    ///
+    /// # Arguments
+    /// * `root` - The root element to search within (descendants only)
+    /// * `class_names` - Space-separated list of class names (all must match)
+    ///
+    /// # Examples
+    /// ```ignore
+    /// // Matches elements with both "foo" and "bar" classes
+    /// let collection = HTMLCollection::by_class_name(root, "foo bar".to_string());
+    /// ```
+    pub fn by_class_name(root: ElementRef, class_names: String) -> Self {
+        // Parse the space-separated class names
+        let target_classes: Vec<String> = class_names
+            .split_whitespace()
+            .map(|s| s.to_string())
+            .collect();
+
+        // If no classes specified, return empty collection (nothing matches)
+        if target_classes.is_empty() {
+            return HTMLCollection::new(root, |_: &ElementRef| false);
+        }
+
+        HTMLCollection::new(root, move |el: &ElementRef| {
+            let element = el.read();
+            let element_classes = element.class_list();
+
+            // All target classes must be present in the element
+            target_classes
+                .iter()
+                .all(|target| element_classes.contains(target))
+        })
+    }
+
+    /// Creates an HTMLCollection that matches elements by namespace and local name.
+    ///
+    /// This is used by `Element.getElementsByTagNameNS()`.
+    ///
+    /// # Arguments
+    /// * `root` - The root element to search within (descendants only)
+    /// * `namespace` - The namespace URI to match (None matches no namespace, Some("*") matches any)
+    /// * `local_name` - The local name to match ("*" matches any)
+    ///
+    /// # Examples
+    /// ```ignore
+    /// // Match SVG elements with any local name
+    /// let collection = HTMLCollection::by_tag_name_ns(
+    ///     root,
+    ///     Some("http://www.w3.org/2000/svg".to_string()),
+    ///     "*".to_string()
+    /// );
+    /// ```
+    pub fn by_tag_name_ns(root: ElementRef, namespace: Option<String>, local_name: String) -> Self {
+        let target_local_name = local_name.to_uppercase();
+        let match_any_local_name = target_local_name == "*";
+        let match_any_namespace = namespace.as_deref() == Some("*");
+
+        HTMLCollection::new(root, move |el: &ElementRef| {
+            let element = el.read();
+
+            // Check local name match
+            let local_name_matches = if match_any_local_name {
+                true
+            } else {
+                element.tag_name() == target_local_name
+            };
+
+            // Check namespace match
+            let namespace_matches = if match_any_namespace {
+                true
+            } else {
+                match (&namespace, element.namespace_uri()) {
+                    (None, None) => true,           // Both have no namespace
+                    (Some(ns), Some(el_ns)) => ns == el_ns, // Both have same namespace
+                    _ => false,                      // One has namespace, other doesn't
+                }
+            };
+
+            local_name_matches && namespace_matches
+        })
+    }
+
     /// Register an element for tracking (used to build element tree)
     fn register_element(&mut self, element: Weak<RwLock<dom_core::Element>>) {
         self.element_refs.borrow_mut().push(element);
@@ -59,33 +168,50 @@ impl HTMLCollection {
         let mut items = Vec::new();
 
         if let Some(root) = self.root.upgrade() {
-            // Collect from root
-            self.collect_from_element_and_children(&root, &mut items);
+            // Collect from root's DESCENDANTS only (not root itself)
+            // This matches the DOM spec for getElementsBy* methods
+            self.collect_descendants(&root, &mut items);
         }
 
         *self.cached_items.borrow_mut() = items;
     }
 
-    /// Collects matching elements from an element and its descendants
+    /// Collects matching elements from an element's descendants (not the element itself)
+    fn collect_descendants(&self, element: &ElementRef, items: &mut Vec<ElementRef>) {
+        // Get children from the element's node data
+        let children = element.read().child_nodes();
+
+        // Process each child
+        for child in children {
+            // Check node type and release lock before downcast to avoid deadlock
+            // parking_lot::RwLock does not support recursive read locks from same thread
+            let is_element = child.read().node_type() == NodeType::Element;
+
+            if is_element {
+                // Downcast NodeRef to ElementRef using as_any()
+                if let Some(child_element) = self.downcast_to_element(&child) {
+                    // Check if this descendant matches the filter
+                    if (self.filter)(&child_element) {
+                        items.push(child_element.clone());
+                    }
+                    // Recursively collect from this element's descendants
+                    self.collect_descendants(&child_element, items);
+                }
+            }
+        }
+    }
+
+    /// Collects matching elements from an element and its descendants (includes the element)
+    /// This is kept for potential future use where we want to include the root
+    #[allow(dead_code)]
     fn collect_from_element_and_children(&self, element: &ElementRef, items: &mut Vec<ElementRef>) {
         // Check if this element matches the filter
         if (self.filter)(element) {
             items.push(element.clone());
         }
 
-        // Get children from the element's node data
-        let children = element.read().child_nodes();
-
-        // Process each child
-        for child in children {
-            if child.read().node_type() == NodeType::Element {
-                // Downcast NodeRef to ElementRef using as_any()
-                if let Some(child_element) = self.downcast_to_element(&child) {
-                    // Recursively collect from this element and its children
-                    self.collect_from_element_and_children(&child_element, items);
-                }
-            }
-        }
+        // Then collect from descendants
+        self.collect_descendants(element, items);
     }
 
     /// Helper method to downcast a NodeRef to ElementRef

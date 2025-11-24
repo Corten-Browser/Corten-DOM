@@ -1,7 +1,102 @@
-//! Live collections and tree traversal for DOM
+//! Live collections and tree traversal for CortenBrowser DOM.
 //!
-//! This crate provides HTMLCollection, NodeList, and tree walking
-//! functionality.
+//! This crate provides live and static collections, attribute maps,
+//! and tree traversal iterators following the DOM specification.
+//!
+//! # Overview
+//!
+//! The collections system provides:
+//!
+//! - **Live Collections**: `HTMLCollection` and live `NodeList` that update automatically
+//! - **Static Collections**: Snapshot `NodeList` for query results
+//! - **Token Lists**: `DOMTokenList` for class and attribute management
+//! - **Tree Traversal**: `TreeWalker` and `NodeIterator` for flexible navigation
+//!
+//! # Live vs Static Collections
+//!
+//! **Live collections** automatically reflect DOM changes:
+//!
+//! ```rust
+//! use dom_collections::HTMLCollection;
+//!
+//! // HTMLCollection stays in sync with the DOM
+//! // let divs = element.get_elements_by_tag_name("div");
+//! // Adding a div to the DOM automatically updates the collection
+//! ```
+//!
+//! **Static collections** are snapshots that don't change:
+//!
+//! ```rust
+//! use dom_collections::NodeList;
+//!
+//! // querySelectorAll returns a static NodeList
+//! // Adding elements won't affect this collection
+//! ```
+//!
+//! # Collection Types
+//!
+//! | Type | Live | Description |
+//! |------|------|-------------|
+//! | [`HTMLCollection`] | Yes | Elements by tag name or class |
+//! | [`NodeList`] | Both | Nodes from queries or childNodes |
+//! | [`DOMTokenList`] | Yes | Space-separated token lists (classes) |
+//! | [`NamedNodeMap`] | Yes | Element attributes |
+//!
+//! # Tree Traversal
+//!
+//! ## TreeWalker
+//!
+//! Navigate the tree with full control:
+//!
+//! ```rust
+//! use dom_collections::{TreeWalker, SHOW_ELEMENT};
+//!
+//! // TreeWalker allows bidirectional traversal
+//! // let walker = doc.create_tree_walker(root, SHOW_ELEMENT, None);
+//! // walker.next_node();
+//! // walker.previous_node();
+//! // walker.parent_node();
+//! ```
+//!
+//! ## NodeIterator
+//!
+//! Sequential iteration through nodes:
+//!
+//! ```rust
+//! use dom_collections::{NodeIterator, SHOW_TEXT};
+//!
+//! // NodeIterator for sequential access
+//! // let iter = doc.create_node_iterator(root, SHOW_TEXT, None);
+//! // while let Some(node) = iter.next_node() { ... }
+//! ```
+//!
+//! # Node Filter
+//!
+//! Filter nodes during traversal using closures:
+//!
+//! ```rust,ignore
+//! use dom_collections::{FilterResult, node_iterator::NodeRef};
+//! use std::sync::Arc;
+//!
+//! // Create a filter that accepts all element nodes
+//! let filter: Option<Arc<dyn Fn(&NodeRef) -> FilterResult + Send + Sync>> =
+//!     Some(Arc::new(|_node| FilterResult::Accept));
+//! ```
+//!
+//! # Show Flags
+//!
+//! | Flag | Description |
+//! |------|-------------|
+//! | `SHOW_ALL` | Show all node types |
+//! | `SHOW_ELEMENT` | Show only elements |
+//! | `SHOW_TEXT` | Show only text nodes |
+//! | `SHOW_COMMENT` | Show only comments |
+//! | `SHOW_DOCUMENT` | Show document nodes |
+//!
+//! # Related Crates
+//!
+//! - [`dom_core`](../dom_core/index.html) - Core DOM nodes
+//! - [`dom_selectors`](../dom_selectors/index.html) - CSS selector queries
 
 #![warn(missing_docs)]
 

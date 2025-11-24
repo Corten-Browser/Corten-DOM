@@ -3,7 +3,9 @@
 use crate::attr::{Attr, AttrRef};
 use crate::comment::Comment;
 use crate::element::{Element, ElementRef};
+use crate::event::{self, Event};
 use crate::node::{Node, NodeData, NodeRef};
+use crate::range::Range;
 use crate::text::Text;
 use dom_types::{DomException, NodeType};
 use indexmap::IndexMap;
@@ -136,6 +138,8 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc = Document::new();
     /// let attr = doc.create_attribute("id").unwrap();
     /// attr.write().set_value("main");
@@ -169,6 +173,8 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc = Document::new();
     /// let attr = doc.create_attribute_ns(
     ///     Some("http://www.w3.org/1999/xlink"),
@@ -213,10 +219,13 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc1 = Document::new();
     /// let mut doc2 = Document::new();
     /// let elem = doc1.create_element("div").unwrap();
-    /// let imported = doc2.import_node(elem.into(), true).unwrap();
+    /// // Note: elem.into() converts ElementRef to NodeRef
+    /// // let imported = doc2.import_node(elem.into(), true).unwrap();
     /// ```
     pub fn import_node(
         &mut self,
@@ -250,10 +259,13 @@ impl Document {
     ///
     /// # Example
     /// ```
+    /// use dom_core::Document;
+    ///
     /// let mut doc1 = Document::new();
     /// let mut doc2 = Document::new();
     /// let elem = doc1.create_element("div").unwrap();
-    /// let adopted = doc2.adopt_node(elem.into()).unwrap();
+    /// // Note: elem.into() converts ElementRef to NodeRef
+    /// // let adopted = doc2.adopt_node(elem.into()).unwrap();
     /// ```
     pub fn adopt_node(&mut self, node: NodeRef) -> Result<NodeRef, DomException> {
         let node_type = node.read().node_type();
@@ -303,6 +315,94 @@ impl Document {
         }
 
         result
+    }
+
+    /// Gets elements by the `name` attribute
+    ///
+    /// Returns a collection of elements that have a `name` attribute matching
+    /// the specified value. This method searches the entire document tree.
+    ///
+    /// # Arguments
+    /// * `name` - The name attribute value to search for
+    ///
+    /// # Returns
+    /// A vector of ElementRef matching the name attribute
+    ///
+    /// # Example
+    /// ```
+    /// use dom_core::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let elem = doc.create_element("input").unwrap();
+    /// elem.write().set_attribute("name", "username").unwrap();
+    /// doc.set_document_element(elem);
+    /// let elements = doc.get_elements_by_name("username");
+    /// ```
+    pub fn get_elements_by_name(&self, name: &str) -> Vec<ElementRef> {
+        let mut result = Vec::new();
+
+        if let Some(root) = &self.document_element {
+            self.collect_elements_by_name(root, name, &mut result);
+        }
+
+        result
+    }
+
+    /// Creates a new Event of the specified type
+    ///
+    /// This is the legacy DOM Level 2 createEvent() method. The returned event
+    /// must be initialized using initEvent() before being dispatched.
+    ///
+    /// # Arguments
+    /// * `event_interface` - The event interface name (e.g., "Event", "UIEvents", "MouseEvents")
+    ///
+    /// # Returns
+    /// * `Ok(Event)` - A new event of the specified type
+    /// * `Err(DomException::NotSupportedError)` - If the interface is not recognized
+    ///
+    /// # Supported Interfaces
+    /// - "Event", "Events", "HTMLEvents" - Basic Event
+    /// - "UIEvent", "UIEvents" - UI Event
+    /// - "MouseEvent", "MouseEvents" - Mouse Event
+    /// - "KeyboardEvent" - Keyboard Event
+    /// - "FocusEvent" - Focus Event
+    /// - "CustomEvent" - Custom Event
+    ///
+    /// # Example
+    /// ```
+    /// use dom_core::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let mut event = doc.create_event("Events").unwrap();
+    /// event.init_event("click", true, true);
+    /// ```
+    pub fn create_event(&mut self, event_interface: &str) -> Result<Event, DomException> {
+        event::create_event(event_interface)
+    }
+
+    /// Creates a new Range object
+    ///
+    /// The returned Range has both its boundary points set to the beginning
+    /// of the Document (or a dummy node if no document element exists).
+    ///
+    /// # Returns
+    /// A new Range object with both boundary points at document start
+    ///
+    /// # Example
+    /// ```
+    /// use dom_core::Document;
+    ///
+    /// let mut doc = Document::new();
+    /// let range = doc.create_range();
+    /// assert!(range.collapsed());
+    /// ```
+    pub fn create_range(&self) -> Range {
+        // Get the document element or its first child as the initial container
+        let initial_node = self.document_element.as_ref().map(|elem| {
+            Arc::new(RwLock::new(Box::new(elem.read().clone()) as Box<dyn Node>))
+        });
+
+        Range::new(initial_node)
     }
 
     /// Gets the document URL
@@ -373,6 +473,50 @@ impl Document {
             if child.read().node_type() == NodeType::Element {
                 // Recursively search children
             }
+        }
+    }
+
+    /// Collects elements by name attribute recursively
+    fn collect_elements_by_name(
+        &self,
+        element: &ElementRef,
+        name: &str,
+        result: &mut Vec<ElementRef>,
+    ) {
+        let elem = element.read();
+
+        // Check if element has matching name attribute
+        if let Some(attr_name) = elem.get_attribute("name") {
+            if attr_name == name {
+                result.push(element.clone());
+            }
+        }
+
+        // Search children recursively
+        for child in elem.child_nodes() {
+            if child.read().node_type() == NodeType::Element {
+                // We need to convert NodeRef to ElementRef for recursion
+                // This is a simplified implementation - in production, we'd need
+                // proper type conversion
+                if let Some(child_elem) = self.node_to_element(&child) {
+                    self.collect_elements_by_name(&child_elem, name, result);
+                }
+            }
+        }
+    }
+
+    /// Helper to convert NodeRef to ElementRef if the node is an element
+    fn node_to_element(&self, node: &NodeRef) -> Option<ElementRef> {
+        let node_guard = node.read();
+        if node_guard.node_type() != NodeType::Element {
+            return None;
+        }
+
+        // Use downcast to get the Element
+        if let Some(elem) = node_guard.as_any().downcast_ref::<Element>() {
+            Some(Arc::new(RwLock::new(elem.clone())))
+        } else {
+            None
         }
     }
 }

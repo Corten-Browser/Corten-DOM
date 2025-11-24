@@ -9,7 +9,7 @@ use dom_types::NodeType;
 use parking_lot::RwLock;
 use std::sync::Arc;
 
-/// Helper to create a test tree structure
+/// Helper to create a test tree structure with proper parent relationships
 /// Tree structure:
 ///   root (div)
 ///     ├── text1 ("Hello")
@@ -21,65 +21,74 @@ use std::sync::Arc;
 ///         ├── text3 ("End")
 ///         └── em
 fn create_test_tree() -> Arc<RwLock<Box<dyn Node>>> {
-    let mut doc = Document::new();
+    use dom_core::{Text, Comment};
 
-    // Create root element
-    let root = doc.create_element("div").unwrap();
+    // Create root element as NodeRef directly
+    let root: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("div")) as Box<dyn Node>));
 
-    // Create and add text1
-    let text1 = doc.create_text_node("Hello");
-    root.write().append_child(text1).unwrap();
+    // Create text1
+    let text1: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Text::new("Hello")) as Box<dyn Node>));
+    text1.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
+    root.write().node_data_mut().add_child(text1);
 
     // Create span with text2 and b
-    let span = doc.create_element("span").unwrap();
-    let text2 = doc.create_text_node("World");
-    span.write().append_child(text2).unwrap();
-    let b = doc.create_element("b").unwrap();
-    span.write().append_child(Arc::new(RwLock::new(Box::new(b.read().clone()) as Box<dyn Node>))).unwrap();
+    let span: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("span")) as Box<dyn Node>));
+    span.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
 
-    // Convert span to NodeRef and add to root
-    let span_node: Arc<RwLock<Box<dyn Node>>> =
-        Arc::new(RwLock::new(Box::new(span.read().clone()) as Box<dyn Node>));
-    root.write().append_child(span_node).unwrap();
+    let text2: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Text::new("World")) as Box<dyn Node>));
+    text2.write().node_data_mut().set_parent(Some(Arc::downgrade(&span)));
+    span.write().node_data_mut().add_child(text2);
 
-    // Create and add comment
-    let comment = doc.create_comment("test comment");
-    root.write().append_child(comment).unwrap();
+    let b: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("b")) as Box<dyn Node>));
+    b.write().node_data_mut().set_parent(Some(Arc::downgrade(&span)));
+    span.write().node_data_mut().add_child(b);
+
+    root.write().node_data_mut().add_child(span);
+
+    // Create comment
+    let comment: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Comment::new("test comment")) as Box<dyn Node>));
+    comment.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
+    root.write().node_data_mut().add_child(comment);
 
     // Create p with text3 and em
-    let p = doc.create_element("p").unwrap();
-    let text3 = doc.create_text_node("End");
-    p.write().append_child(text3).unwrap();
-    let em = doc.create_element("em").unwrap();
-    p.write().append_child(Arc::new(RwLock::new(Box::new(em.read().clone()) as Box<dyn Node>))).unwrap();
+    let p: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("p")) as Box<dyn Node>));
+    p.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
 
-    // Convert p to NodeRef and add to root
-    let p_node: Arc<RwLock<Box<dyn Node>>> =
-        Arc::new(RwLock::new(Box::new(p.read().clone()) as Box<dyn Node>));
-    root.write().append_child(p_node).unwrap();
+    let text3: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Text::new("End")) as Box<dyn Node>));
+    text3.write().node_data_mut().set_parent(Some(Arc::downgrade(&p)));
+    p.write().node_data_mut().add_child(text3);
 
-    // Convert root to NodeRef and return
-    let root_clone = root.read().clone();
-    Arc::new(RwLock::new(Box::new(root_clone) as Box<dyn Node>))
+    let em: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("em")) as Box<dyn Node>));
+    em.write().node_data_mut().set_parent(Some(Arc::downgrade(&p)));
+    p.write().node_data_mut().add_child(em);
+
+    root.write().node_data_mut().add_child(p);
+
+    root
 }
 
-/// Helper to create a simpler test tree
+/// Helper to create a simpler test tree with proper parent relationships
 /// Tree structure:
 ///   root (div)
 ///     ├── span
 ///     └── p
 fn create_simple_tree() -> Arc<RwLock<Box<dyn Node>>> {
-    let mut doc = Document::new();
-    let root = doc.create_element("div").unwrap();
+    // Create root as NodeRef directly
+    let root: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("div")) as Box<dyn Node>));
 
-    let span = doc.create_element("span").unwrap();
-    root.write().append_child(Arc::new(RwLock::new(Box::new(span.read().clone()) as Box<dyn Node>))).unwrap();
+    // Create children as NodeRefs
+    let span: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("span")) as Box<dyn Node>));
+    let p: Arc<RwLock<Box<dyn Node>>> = Arc::new(RwLock::new(Box::new(Element::new("p")) as Box<dyn Node>));
 
-    let p = doc.create_element("p").unwrap();
-    root.write().append_child(Arc::new(RwLock::new(Box::new(p.read().clone()) as Box<dyn Node>))).unwrap();
+    // Set parent references first (before adding to children)
+    span.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
+    p.write().node_data_mut().set_parent(Some(Arc::downgrade(&root)));
 
-    let root_clone = root.read().clone();
-    Arc::new(RwLock::new(Box::new(root_clone) as Box<dyn Node>))
+    // Add children to root
+    root.write().node_data_mut().add_child(span);
+    root.write().node_data_mut().add_child(p);
+
+    root
 }
 
 #[test]

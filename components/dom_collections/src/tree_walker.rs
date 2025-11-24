@@ -324,7 +324,7 @@ impl TreeWalker {
     /// Moves to the previous node in tree order
     ///
     /// Traverses the tree backwards from current_node.
-    /// Returns None when reaching the beginning.
+    /// Returns None when reaching the beginning (at or before root).
     /// Updates current_node to the previous node if successful.
     pub fn previous_node(&mut self) -> Option<NodeRef> {
         // Check if at root
@@ -335,6 +335,11 @@ impl TreeWalker {
         let mut node = self.previous_in_tree_order(&self.current_node)?;
 
         loop {
+            // Stop if we've reached the root - don't return root via previousNode
+            if self.is_same_node(&self.root, &node) {
+                return None;
+            }
+
             match self.accept_node(&node) {
                 FilterResult::Accept => {
                     self.current_node = node.clone();
@@ -346,7 +351,11 @@ impl TreeWalker {
                 }
                 FilterResult::Skip => {
                     // Skip this node but check its descendants
-                    node = self.previous_in_tree_order(&node)?;
+                    if let Some(next) = self.previous_in_tree_order(&node) {
+                        node = next;
+                    } else {
+                        return None;
+                    }
                 }
             }
         }

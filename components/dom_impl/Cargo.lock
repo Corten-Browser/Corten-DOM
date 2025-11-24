@@ -71,6 +71,7 @@ dependencies = [
  "dom-types",
  "insta",
  "mockall",
+ "once_cell",
  "parking_lot",
  "proptest",
  "serde",

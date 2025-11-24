@@ -1,5 +1,8 @@
 //! Core Node trait and base implementation
 
+use crate::tree_order::compare_document_position;
+// Re-export DocumentPosition for use by callers
+pub use crate::tree_order::DocumentPosition;
 use dom_types::{DomException, NodeType};
 use parking_lot::RwLock;
 use std::fmt;
@@ -125,6 +128,20 @@ pub trait Node: Send + Sync + std::fmt::Debug {
     /// Checks if this node contains another node
     fn contains(&self, other: &dyn Node) -> bool; // Must be implemented by concrete types
 
+    /// Compares the document position of this node with another node
+    ///
+    /// Returns a bitmask of `DocumentPosition` flags indicating the relationship.
+    /// Common return values:
+    /// - 0: Nodes are the same
+    /// - PRECEDING (2): Other node precedes this node
+    /// - FOLLOWING (4): Other node follows this node
+    /// - CONTAINS (8): Other node contains this node
+    /// - CONTAINED_BY (16): Other node is contained by this node
+    /// - DISCONNECTED (1): Nodes are not in the same tree
+    fn compare_document_position(&self, other: &NodeRef, self_ref: &NodeRef) -> u16 {
+        compare_document_position(self_ref, other)
+    }
+
     /// Access to internal node data
     fn node_data(&self) -> &NodeData;
 
@@ -149,6 +166,10 @@ pub struct NodeData {
 
     /// Child nodes
     pub children: Vec<NodeRef>,
+
+    /// Self-reference to the NodeRef that wraps this node (set after construction)
+    /// This is needed so that append_child can set the correct parent reference
+    pub self_node_ref: Option<WeakNodeRef>,
 }
 
 impl NodeData {
@@ -159,7 +180,19 @@ impl NodeData {
             node_name: node_name.into(),
             parent: None,
             children: Vec::new(),
+            self_node_ref: None,
         }
+    }
+
+    /// Sets the self-reference to the NodeRef that wraps this node
+    /// This MUST be called after wrapping the node in Arc<RwLock<Box<dyn Node>>>
+    pub fn set_self_node_ref(&mut self, self_ref: WeakNodeRef) {
+        self.self_node_ref = Some(self_ref);
+    }
+
+    /// Gets the NodeRef that wraps this node (if set)
+    pub fn get_self_node_ref(&self) -> Option<NodeRef> {
+        self.self_node_ref.as_ref().and_then(|weak| weak.upgrade())
     }
 
     /// Sets the parent node
