@@ -6,13 +6,15 @@
       "description": "Core Node trait that all DOM nodes must implement with node_type, node_name, node_value, text_content, and tree relationships",
       "feature_id": "FEAT-001",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362613Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-002",
@@ -22,13 +24,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362639Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-003",
@@ -38,13 +42,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362641Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-004",
@@ -54,13 +60,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362642Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-005",
@@ -70,13 +78,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362643Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-006",
@@ -86,13 +96,15 @@
       "dependencies": [
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362645Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-007",
@@ -102,13 +114,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362646Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-008",
@@ -119,13 +133,15 @@
         "FEAT-001",
         "FEAT-007"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362649Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-009",
@@ -136,13 +152,15 @@
         "FEAT-001",
         "FEAT-007"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362651Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-010",
@@ -153,13 +171,15 @@
         "FEAT-005",
         "FEAT-006"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_collections"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_collections",
+      "reset_timestamp": "2025-11-24T19:06:42.362653Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-011",
@@ -167,13 +187,15 @@
       "description": "Event struct with type, target, currentTarget, phase, bubbles, cancelable, composed, isTrusted, timeStamp, propagation flags",
       "feature_id": "FEAT-011",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362654Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-012",
@@ -183,13 +205,15 @@
       "dependencies": [
         "FEAT-011"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362655Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-013",
@@ -200,13 +224,15 @@
         "FEAT-011",
         "FEAT-012"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362656Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-014",
@@ -216,13 +242,15 @@
       "dependencies": [
         "FEAT-013"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362658Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-015",
@@ -233,13 +261,15 @@
         "FEAT-005",
         "FEAT-017"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362659Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-016",
@@ -250,13 +280,15 @@
         "FEAT-005",
         "FEAT-017"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362660Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-017",
@@ -264,13 +296,15 @@
       "description": "CSS selector parser using cssparser crate and selectors crate for matching",
       "feature_id": "FEAT-017",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362661Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-018",
@@ -280,13 +314,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362662Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-019",
@@ -296,13 +332,15 @@
       "dependencies": [
         "FEAT-020"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362664Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-020",
@@ -312,13 +350,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362665Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-021",
@@ -328,13 +368,15 @@
       "dependencies": [
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362666Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-022",
@@ -344,13 +386,15 @@
       "dependencies": [
         "FEAT-021"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362667Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-023",
@@ -361,13 +405,15 @@
         "FEAT-013",
         "FEAT-021"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362668Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-024",
@@ -375,13 +421,15 @@
       "description": "NodeArena with thread-safe node storage, generational indices, allocation and deallocation",
       "feature_id": "FEAT-024",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362669Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-025",
@@ -391,13 +439,15 @@
       "dependencies": [
         "FEAT-024"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362670Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-026",
@@ -408,13 +458,15 @@
         "FEAT-006",
         "FEAT-007"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362671Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-027",
@@ -425,13 +477,15 @@
         "FEAT-001",
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/messages.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/messages.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362672Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-028",
@@ -441,13 +495,15 @@
       "dependencies": [
         "FEAT-027"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/tests/integration/"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/tests/integration/",
+      "reset_timestamp": "2025-11-24T19:06:42.362673Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-029",
@@ -455,13 +511,15 @@
       "description": "API documentation, usage examples, and architecture documentation",
       "feature_id": "FEAT-029",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "automated-deliverables",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - README.md files in all components"
+      "reconciliation_notes": "Implemented during orchestration session - README.md files in all components",
+      "reset_timestamp": "2025-11-24T19:06:42.362674Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-030",
@@ -471,13 +529,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362675Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-031",
@@ -487,13 +547,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362676Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-032",
@@ -503,13 +565,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362677Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-033",
@@ -519,13 +583,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362678Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-034",
@@ -535,13 +601,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362679Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-035",
@@ -552,13 +620,15 @@
         "FEAT-001",
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362680Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-036",
@@ -568,13 +638,15 @@
       "dependencies": [
         "FEAT-035"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362681Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-037",
@@ -584,13 +656,15 @@
       "dependencies": [
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362682Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-038",
@@ -600,13 +674,15 @@
       "dependencies": [
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/string_map.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/string_map.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362683Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-039",
@@ -616,13 +692,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362684Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-040",
@@ -632,13 +710,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/tree_order.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/tree_order.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362685Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-041",
@@ -649,13 +729,15 @@
         "FEAT-001",
         "FEAT-031"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362686Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-042",
@@ -666,13 +748,15 @@
         "FEAT-005",
         "FEAT-035"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/element.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/element.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362687Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-043",
@@ -683,13 +767,15 @@
         "FEAT-005",
         "FEAT-035"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/element.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/element.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362688Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-044",
@@ -699,13 +785,15 @@
       "dependencies": [
         "FEAT-005"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362689Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-045",
@@ -713,13 +801,15 @@
       "description": "DOMRect struct with x, y, width, height, top, right, bottom, left and DOMRectList collection",
       "feature_id": "FEAT-045",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/geometry.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/geometry.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362690Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-046",
@@ -729,13 +819,15 @@
       "dependencies": [
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362691Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-047",
@@ -745,13 +837,15 @@
       "dependencies": [
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362692Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-048",
@@ -762,13 +856,15 @@
         "FEAT-030",
         "FEAT-011"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs and dom_events"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs and dom_events",
+      "reset_timestamp": "2025-11-24T19:06:42.362693Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-049",
@@ -779,13 +875,15 @@
         "FEAT-030",
         "FEAT-020"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362694Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-050",
@@ -795,13 +893,15 @@
       "dependencies": [
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362695Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-051",
@@ -812,13 +912,15 @@
         "FEAT-030",
         "FEAT-007"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_core/src/document.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362696Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-052",
@@ -828,13 +930,15 @@
       "dependencies": [
         "FEAT-011"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362697Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-053",
@@ -844,13 +948,15 @@
       "dependencies": [
         "FEAT-011"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362698Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-054",
@@ -860,13 +966,15 @@
       "dependencies": [
         "FEAT-018"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362699Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-055",
@@ -877,13 +985,15 @@
         "FEAT-018",
         "FEAT-054"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362700Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-056",
@@ -893,13 +1003,15 @@
       "dependencies": [
         "FEAT-020"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362701Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-057",
@@ -907,13 +1019,15 @@
       "description": "NodeFilter for filtering nodes in NodeIterator and TreeWalker",
       "feature_id": "FEAT-057",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362702Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-058",
@@ -924,13 +1038,15 @@
         "FEAT-024",
         "FEAT-025"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362703Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-059",
@@ -938,13 +1054,15 @@
       "description": "Namespace URI validation for createElement_ns, createAttribute_ns",
       "feature_id": "FEAT-059",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362704Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-060",
@@ -954,13 +1072,15 @@
       "dependencies": [
         "FEAT-059"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362705Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-061",
@@ -970,13 +1090,15 @@
       "dependencies": [
         "FEAT-059"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/validation.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362706Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-062",
@@ -984,13 +1106,15 @@
       "description": "SanitizationPolicy with XSS prevention: script tag removal, event handler stripping, javascript URL blocking",
       "feature_id": "FEAT-062",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/sanitization.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/sanitization.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362707Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-063",
@@ -998,13 +1122,15 @@
       "description": "Complete DomException enum with all W3C exception types: HierarchyRequestError, WrongDocumentError, InvalidCharacterError, etc.",
       "feature_id": "FEAT-063",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362708Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-064",
@@ -1012,13 +1138,15 @@
       "description": "DomConfig struct with max_tree_depth, max_children, enable_mutation_observers, enable_shadow_dom, gc_threshold, arena_capacity, max_listeners_per_node",
       "feature_id": "FEAT-064",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362709Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-065",
@@ -1026,13 +1154,15 @@
       "description": "Build script generating atom cache from atoms.txt for common DOM strings",
       "feature_id": "FEAT-065",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/atoms.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/atoms.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362710Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-066",
@@ -1043,13 +1173,15 @@
         "FEAT-027",
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362711Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-067",
@@ -1059,13 +1191,15 @@
       "dependencies": [
         "FEAT-027"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362712Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-068",
@@ -1076,13 +1210,15 @@
         "FEAT-027",
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362713Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-069",
@@ -1092,13 +1228,15 @@
       "dependencies": [
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs and dom_core/tests/wpt_nodes.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_impl/src/integration.rs and dom_core/tests/wpt_nodes.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362714Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-070",
@@ -1106,13 +1244,15 @@
       "description": "Criterion benchmarks for element creation, deep tree creation, querySelector, event dispatch",
       "feature_id": "FEAT-070",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362715Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-071",
@@ -1120,13 +1260,15 @@
       "description": "NodeType enum with Element, Attribute, Text, CDataSection, ProcessingInstruction, Comment, Document, DocumentType, DocumentFragment",
       "feature_id": "FEAT-071",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362716Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-072",
@@ -1134,13 +1276,15 @@
       "description": "DocumentPosition bitflags for compareDocumentPosition results",
       "feature_id": "FEAT-072",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362717Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-073",
@@ -1148,13 +1292,15 @@
       "description": "EventPhase enum with None, Capturing, AtTarget, Bubbling values",
       "feature_id": "FEAT-073",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362718Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-074",
@@ -1162,13 +1308,15 @@
       "description": "ShadowRootMode enum with Open and Closed variants",
       "feature_id": "FEAT-074",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/shadow_root.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/shadow_root.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362719Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-075",
@@ -1176,13 +1324,15 @@
       "description": "MutationType enum with Attributes, CharacterData, ChildList variants",
       "feature_id": "FEAT-075",
       "dependencies": [],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-24T00:00:00.000000Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "implementation",
-      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/mutation.rs"
+      "reconciliation_notes": "Implemented during orchestration session - found in dom_types/src/mutation.rs",
+      "reset_timestamp": "2025-11-24T19:06:42.362720Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-076",
@@ -1193,13 +1343,15 @@
         "FEAT-013",
         "FEAT-021"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362721Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-077",
@@ -1209,13 +1361,15 @@
       "dependencies": [
         "FEAT-030"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362722Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-078",
@@ -1225,13 +1379,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362723Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-079",
@@ -1241,13 +1397,15 @@
       "dependencies": [
         "FEAT-001"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362724Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     },
     {
       "id": "TASK-FEAT-080",
@@ -1258,98 +1416,19 @@
         "FEAT-005",
         "FEAT-021"
       ],
-      "status": "completed",
+      "status": "incomplete",
       "started_at": null,
-      "completed_at": "2025-11-23T22:55:30.272468Z",
+      "completed_at": null,
       "verification_result": null,
       "extraction_method": "llm",
       "completion_method": "reconciliation",
-      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue"
+      "reconciliation_notes": "Detected as already implemented via /orch-reconcile-queue",
+      "reset_timestamp": "2025-11-24T19:06:42.362725Z",
+      "reset_reason": "Manual reset via /orch-reconcile-queue --reset"
     }
   ],
-  "completed_order": [
-    "TASK-FEAT-001",
-    "TASK-FEAT-002",
-    "TASK-FEAT-003",
-    "TASK-FEAT-004",
-    "TASK-FEAT-005",
-    "TASK-FEAT-006",
-    "TASK-FEAT-007",
-    "TASK-FEAT-008",
-    "TASK-FEAT-009",
-    "TASK-FEAT-010",
-    "TASK-FEAT-011",
-    "TASK-FEAT-012",
-    "TASK-FEAT-013",
-    "TASK-FEAT-014",
-    "TASK-FEAT-015",
-    "TASK-FEAT-016",
-    "TASK-FEAT-017",
-    "TASK-FEAT-018",
-    "TASK-FEAT-019",
-    "TASK-FEAT-020",
-    "TASK-FEAT-021",
-    "TASK-FEAT-022",
-    "TASK-FEAT-023",
-    "TASK-FEAT-024",
-    "TASK-FEAT-025",
-    "TASK-FEAT-026",
-    "TASK-FEAT-027",
-    "TASK-FEAT-028",
-    "TASK-FEAT-029",
-    "TASK-FEAT-030",
-    "TASK-FEAT-031",
-    "TASK-FEAT-032",
-    "TASK-FEAT-033",
-    "TASK-FEAT-034",
-    "TASK-FEAT-035",
-    "TASK-FEAT-036",
-    "TASK-FEAT-037",
-    "TASK-FEAT-038",
-    "TASK-FEAT-039",
-    "TASK-FEAT-040",
-    "TASK-FEAT-041",
-    "TASK-FEAT-042",
-    "TASK-FEAT-043",
-    "TASK-FEAT-044",
-    "TASK-FEAT-045",
-    "TASK-FEAT-046",
-    "TASK-FEAT-047",
-    "TASK-FEAT-048",
-    "TASK-FEAT-049",
-    "TASK-FEAT-050",
-    "TASK-FEAT-051",
-    "TASK-FEAT-052",
-    "TASK-FEAT-053",
-    "TASK-FEAT-054",
-    "TASK-FEAT-055",
-    "TASK-FEAT-056",
-    "TASK-FEAT-057",
-    "TASK-FEAT-058",
-    "TASK-FEAT-059",
-    "TASK-FEAT-060",
-    "TASK-FEAT-061",
-    "TASK-FEAT-062",
-    "TASK-FEAT-063",
-    "TASK-FEAT-064",
-    "TASK-FEAT-065",
-    "TASK-FEAT-066",
-    "TASK-FEAT-067",
-    "TASK-FEAT-068",
-    "TASK-FEAT-069",
-    "TASK-FEAT-070",
-    "TASK-FEAT-071",
-    "TASK-FEAT-072",
-    "TASK-FEAT-073",
-    "TASK-FEAT-074",
-    "TASK-FEAT-075",
-    "TASK-FEAT-076",
-    "TASK-FEAT-077",
-    "TASK-FEAT-078",
-    "TASK-FEAT-079",
-    "TASK-FEAT-080"
-  ],
-  "last_updated": "2025-11-24T00:00:00.000000Z",
+  "completed_order": [],
+  "last_updated": "2025-11-24T19:06:42.362727Z",
   "initialized": true,
   "spec_file": "specifications/dom-component-specification.md",
   "spec_files": [
